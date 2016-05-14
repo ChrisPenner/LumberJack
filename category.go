@@ -12,5 +12,6 @@ type Categories struct {
 func (c Categories) Display() *ui.Row {
 	par := ui.NewPar(strings.Join(c.Items, ", "))
 	par.Border = false
+	par.Height = 1
 	return ui.NewRow(ui.NewCol(12, 0, par))
 }

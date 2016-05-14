@@ -4,10 +4,14 @@ import ui "github.com/gizak/termui"
 import tail "github.com/hpcloud/tail"
 import "strings"
 import "os"
+import "time"
 
 const statusBarHeight = 1
 const categoriesHeight = 1
 const numColumns = 12
+
+var renderFlag = false
+var updateChan = make(chan func(*appState))
 
 type appState struct {
 	LogViews   LogViews
@@ -16,7 +20,7 @@ type appState struct {
 }
 
 func logViewHeight() int {
-	return ui.TermHeight() - categoriesHeight - statusBarHeight - 1
+	return ui.TermHeight() - categoriesHeight - statusBarHeight
 }
 
 func addTail(fileName string, callback func(string)) {
@@ -39,20 +43,41 @@ func initFiles(state *appState) {
 		newFile.Name = fileName
 		state.LogViews.Files = append(state.LogViews.Files, newFile)
 		go addTail(fileName, func(newLine string) {
-			newFile.Lines = append(newFile.Lines, newLine)
-			render(state)
+			updateChan <- func(state *appState) {
+				newFile.Lines = append(newFile.Lines, newLine)
+				renderFlag = true
+			}
 		})
 	}
 }
 
-func render(state *appState) {
-	ui.Body.Rows = []*ui.Row{
-		state.Categories.Display(),
-		state.LogViews.Display(logViewHeight()),
-		state.StatusBar.Display(),
+func updateRenderLoop(state *appState, update chan func(*appState)) {
+	for {
+		// Confusing way to guarantee thread safety on state edits
+		debounce := time.After(50 * time.Millisecond)
+		for {
+			select {
+			case <-debounce:
+				break
+			case f := <-update:
+				f(state)
+				continue
+			}
+			break
+		}
+		if !renderFlag {
+			continue
+		}
+		ui.Body.Rows = []*ui.Row{
+			state.Categories.Display(),
+			state.LogViews.Display(logViewHeight()),
+			state.StatusBar.Display(),
+		}
+		ui.Body.Width = ui.TermWidth()
+		ui.Body.Align()
+		ui.Render(ui.Body)
+		renderFlag = false
 	}
-	ui.Body.Align()
-	ui.Render(ui.Body)
 }
 
 func initUI() {
@@ -86,25 +111,30 @@ func main() {
 	initFiles(state)
 	initCategories(state)
 	initStatusBar(state)
-	render(state)
+	renderFlag = true
+	// ui.Handle("/sys/mouse/click", func(e ui.Event) {
+	// 	state.StatusBar.Text = e.Path
+	// 	renderFlag = true
+	// 	// keyPress := e.Data.(ui.EvtKbd).KeyStr
+	// 	// status.Text = keyPress
+	// 	// renderFlag = true
+	// })
 	ui.Handle("/sys/kbd/C-c", func(ui.Event) {
-		render(state)
 		ui.StopLoop()
 	})
-	ui.Handle("/sys/kbd/", func(e ui.Event) {
-		// keyPress := e.Data.(ui.EvtKbd).KeyStr
-		// status.Text = keyPress
-		// render()
-	})
-	// ui.Handle("/sys/wnd/resize", func(e ui.Event) {
-	// 	// newHeight := e.Data.(ui.EvtWnd).Height
-	// 	newWidth := e.Data.(ui.EvtWnd).Width
-	// 	// newHeight := e.Data.(ui.EvtWnd).Height
-	// 	status.Text = "Resized"
-	// 	ui.Body.Width = newWidth
-	// 	ui.Body.Align()
-	// 	// ui.Render(ui.Body)
-	// 	rerender(state)
+	// ui.Handle("/sys/kbd/", func(e ui.Event) {
+	// 	keyPress := e.Data.(ui.EvtKbd).KeyStr
+	// 	state.StatusBar.Text = keyPress
+	// 	renderFlag = true
 	// })
+	// ui.Handle("/sys/mouse", func(e ui.Event) {
+	// 	state.StatusBar.Text = "Click!"
+	// 	renderFlag = true
+	// })
+	// ui.Handle("/sys/wnd/resize", func(ui.Event) {
+	// 	state.StatusBar.Text = "Resize!"
+	// 	renderFlag = true
+	// })
+	go updateRenderLoop(state, updateChan)
 	ui.Loop()
 }

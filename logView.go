@@ -12,7 +12,13 @@ type File struct {
 func (f File) Display(height int) *ui.List {
 	list := ui.NewList()
 	list.Height = height
-	list.Items = f.Lines
+	list.BorderFg = ui.ColorMagenta
+	list.BorderLabel = f.Name
+	sliceStart := len(f.Lines) - (height - 2)
+	if sliceStart < 0 {
+		sliceStart = 0
+	}
+	list.Items = f.Lines[sliceStart:]
 	return list
 }
 

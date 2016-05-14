@@ -11,5 +11,6 @@ type StatusBar struct {
 func (s StatusBar) Display() *ui.Row {
 	par := ui.NewPar(s.Text)
 	par.Border = false
+	par.Height = 1
 	return ui.NewRow(ui.NewCol(12, 0, par))
 }
