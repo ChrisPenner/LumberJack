@@ -9,9 +9,9 @@ const categoriesHeight = 1
 const numColumns = 12
 
 type appState struct {
-	logViews   [][]string
-	categories []string
-	statusBar  *ui.Par
+	LogViews   LogViews
+	Categories Categories
+	StatusBar  StatusBar
 }
 
 func addTail(fileName string, callback func(string)) {
@@ -33,7 +33,7 @@ func render(state *appState) {
 	ui.Render(ui.Body)
 }
 
-func initialize() {
+func initializeUI() {
 	err := ui.Init()
 	if err != nil {
 		panic(err)
@@ -45,19 +45,18 @@ func logViewHeight() int {
 }
 
 func initializeLogViews(state *appState) {
-	logView1 := []string{"Line 1", "Line 2"}
-	logView2 := []string{"Other Line 0", "Other line 2"}
-	state.logViews = [][]string{logView1, logView2}
+	file1 := File{Lines: []string{"Line 1", "Line 2"}}
+	file2 := File{Lines: []string{"Other 1", "Other 2"}}
+	state.LogViews = LogViews{Files: []File{file1, file2}}
 }
 
 func initializeCategories(state *appState) {
-	state.categories = []string{"Category 1", "Category 2"}
+	state.Categories = Categories{Items: []string{"Category 1", "Category 2"}}
 }
 
 func initializeStatusBar(state *appState) {
-	statusBar := ui.NewPar("StatusBar!!")
-	statusBar.Border = false
-	state.statusBar = statusBar
+	statusBar := StatusBar{Text: "StatusBar!!"}
+	state.StatusBar = statusBar
 }
 
 func displayCategories(categories []string) *ui.Par {
@@ -67,36 +66,16 @@ func displayCategories(categories []string) *ui.Par {
 	return categoriesPar
 }
 
-func displayLogViews(logViews [][]string) []*ui.List {
-	listBlocks := []*ui.List{}
-	for _, lines := range logViews {
-		list := ui.NewList()
-		list.Items = lines
-		list.Height = logViewHeight()
-		listBlocks = append(listBlocks, list)
-	}
-	return listBlocks
-}
-
 func initializeBody(state *appState) {
-	logViewColumns := []*ui.Row{}
-	numColumnsEach := 6 //numColumns / 1 //len(state.logViews)
-	listObjects := displayLogViews(state.logViews)
-	for _, logViewList := range listObjects {
-		logViewColumns = append(logViewColumns, ui.NewCol(numColumnsEach, 0, logViewList))
-	}
-
-	categoryPar := displayCategories(state.categories)
-
 	ui.Body.AddRows(
-		ui.NewRow(ui.NewCol(12, 0, categoryPar)),
-		ui.NewRow(logViewColumns...),
-		ui.NewRow(ui.NewCol(12, 0, state.statusBar)),
+		state.Categories.Display(),
+		state.LogViews.Display(logViewHeight()),
+		state.StatusBar.Display(),
 	)
 }
 
 func main() {
-	initialize()
+	initializeUI()
 	defer ui.Close()
 
 	state := new(appState)
