@@ -4,6 +4,7 @@ import ui "github.com/gizak/termui"
 
 // File contains the lines of a given file
 type File struct {
+	Name  string
 	Lines []string
 }
 
@@ -17,7 +18,7 @@ func (f File) Display(height int) *ui.List {
 
 // LogViews is a list of Files
 type LogViews struct {
-	Files []File
+	Files []*File
 }
 
 // Display returns a Row object representing all of the logViews
