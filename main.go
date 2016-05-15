@@ -23,7 +23,10 @@ func Render(state *AppState) {
 	ui.Body.Width = ui.TermWidth()
 	ui.Body.Align()
 	ui.Render(ui.Body)
-	state.CurrentMode.Render(state)
+	switch state.CurrentMode {
+	case selectCategoryMode:
+		renderSelectCategoryModal(state)
+	}
 }
 
 func initUI() {

@@ -3,71 +3,30 @@ package main
 import ui "github.com/gizak/termui"
 import "regexp"
 
-// import "strconv"
-
-// Mode interface
-type Mode interface {
-	Render(*AppState)
-	KeyboardHandler(string)
-}
+const normalMode = "normalMode"
+const selectCategoryMode = "selectCategoryMode"
 
 // ChangeMode changes modes
 type ChangeMode struct {
-	Mode Mode
+	Mode string
 }
 
 // Apply the ChangeMode
 func (action ChangeMode) Apply(state *AppState) {
 	state.CurrentMode = action.Mode
+	state.StatusBar.Text = action.Mode
 }
 
-// NormalMode is the main mode
-type NormalMode struct {
-}
-
-// NewNormalMode is the NormalMode constructor
-func NewNormalMode() Mode {
-	return NormalMode{}
-}
-
-// Render the mode
-func (m NormalMode) Render(_ *AppState) {
-}
-
-// KeyboardHandler for Normal Mode
-func (m NormalMode) KeyboardHandler(key string) {
-	switch key {
-	case "<enter>":
-		nextMode := NewSelectCategoryMode()
-		store.Actions <- ChangeMode{Mode: nextMode}
-	}
-	// if n, err := strconv.Atoi(key); err == nil {
-	// m.state.StatusBar.Text = key
-	// m.state.LogViews.Select(n - 1)
-	// }
-}
-
-// SelectCategoryMode struct
-type SelectCategoryMode struct {
-	Buffer     TextBuffer
-	categories []string
-}
-
-// NewSelectCategoryMode is the NormalMode constructor
-func NewSelectCategoryMode() Mode {
-	return SelectCategoryMode{}
-}
-
-// Render for the mode
-func (m SelectCategoryMode) Render(state *AppState) {
+func renderSelectCategoryModal(state *AppState) {
 	height := ui.TermHeight()
 	width := ui.TermWidth()
+	text := state.selectCategoryBuffer.Text
 
-	par := ui.NewPar("Select a File: " + m.Buffer.Text + "_")
+	par := ui.NewPar("Select a File: " + text + "_")
 	par.Height = 3
 
 	list := ui.NewList()
-	list.Items = getLiteralMatches(m.Buffer.Text, state.Categories.Items)
+	list.Items = getLiteralMatches(text, state.Categories.Items)
 	list.Height = 10
 
 	row := ui.NewRow(ui.NewCol(6, 3, par, list))
@@ -78,20 +37,6 @@ func (m SelectCategoryMode) Render(state *AppState) {
 	grid.Y = height/2 - 10
 	grid.Align()
 	ui.Render(grid)
-}
-
-// KeyboardHandler for SelectCategoryMode
-func (m SelectCategoryMode) KeyboardHandler(key string) {
-	switch key {
-	case "C-8":
-		store.Actions <- Backspace{}
-	case "<enter>":
-		nextMode := NewNormalMode()
-		store.Actions <- ChangeMode{Mode: nextMode}
-		store.Actions <- Backspace{}
-	default:
-		store.Actions <- TypeKey{Key: convertKey(key)}
-	}
 }
 
 func getLiteralMatches(pattern string, items []string) []string {
@@ -108,5 +53,24 @@ type KeyPress struct {
 
 // Apply the KeyPress
 func (action KeyPress) Apply(state *AppState) {
-	state.CurrentMode.KeyboardHandler(action.Key)
+	key := action.Key
+	switch state.CurrentMode {
+	case normalMode:
+		switch key {
+		case "<enter>":
+			store.Actions <- ChangeMode{Mode: selectCategoryMode}
+		}
+	case selectCategoryMode:
+		switch key {
+		case "C-8":
+			store.Actions <- Backspace{}
+		case "<enter>":
+			store.Actions <- ChangeMode{Mode: normalMode}
+			store.Actions <- Backspace{}
+		default:
+			store.Actions <- TypeKey{Key: convertKey(key)}
+		}
+	default:
+		panic(state.CurrentMode)
+	}
 }

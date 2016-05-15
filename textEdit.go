@@ -6,14 +6,15 @@ type Backspace struct {
 
 // Apply the Backspace
 func (action Backspace) Apply(state *AppState) {
-	selectCategoryMode, ok := state.CurrentMode.(SelectCategoryMode)
-	if ok {
-		text := selectCategoryMode.Buffer.Text
+	switch state.CurrentMode {
+	case selectCategoryMode:
+		text := state.selectCategoryBuffer.Text
 		if len(text) > 0 {
 			text = text[:len(text)-1]
 		}
-		selectCategoryMode.Buffer.Text = text
-		state.CurrentMode = selectCategoryMode
+		state.selectCategoryBuffer.Text = text
+	default:
+		break
 	}
 }
 
@@ -24,12 +25,14 @@ type TypeKey struct {
 
 // Apply the Keystroke
 func (action TypeKey) Apply(state *AppState) {
-	selectCategoryMode, ok := state.CurrentMode.(SelectCategoryMode)
-	if ok {
-		text := selectCategoryMode.Buffer.Text
+	switch state.CurrentMode {
+	case selectCategoryMode:
+		text := state.selectCategoryBuffer.Text
 		text = text + action.Key
-		selectCategoryMode.Buffer.Text = text
-		state.CurrentMode = selectCategoryMode
+		state.selectCategoryBuffer.Text = text
+
+	default:
+		break
 	}
 }
 
