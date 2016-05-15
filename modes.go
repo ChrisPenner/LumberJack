@@ -27,15 +27,15 @@ type NormalMode struct {
 
 // NewNormalMode is the NormalMode constructor
 func NewNormalMode() Mode {
-	return &NormalMode{}
+	return NormalMode{}
 }
 
 // Render the mode
-func (m *NormalMode) Render(_ *AppState) {
+func (m NormalMode) Render(_ *AppState) {
 }
 
 // KeyboardHandler for Normal Mode
-func (m *NormalMode) KeyboardHandler(key string) {
+func (m NormalMode) KeyboardHandler(key string) {
 	switch key {
 	case "<enter>":
 		nextMode := NewSelectCategoryMode()
@@ -49,17 +49,17 @@ func (m *NormalMode) KeyboardHandler(key string) {
 
 // SelectCategoryMode struct
 type SelectCategoryMode struct {
-	Buffer     *TextBuffer
+	Buffer     TextBuffer
 	categories []string
 }
 
 // NewSelectCategoryMode is the NormalMode constructor
 func NewSelectCategoryMode() Mode {
-	return &SelectCategoryMode{Buffer: new(TextBuffer)}
+	return SelectCategoryMode{}
 }
 
 // Render for the mode
-func (m *SelectCategoryMode) Render(state *AppState) {
+func (m SelectCategoryMode) Render(state *AppState) {
 	height := ui.TermHeight()
 	width := ui.TermWidth()
 
@@ -81,7 +81,7 @@ func (m *SelectCategoryMode) Render(state *AppState) {
 }
 
 // KeyboardHandler for SelectCategoryMode
-func (m *SelectCategoryMode) KeyboardHandler(key string) {
+func (m SelectCategoryMode) KeyboardHandler(key string) {
 	switch key {
 	case "C-8":
 		store.Actions <- Backspace{Buffer: m.Buffer}
@@ -90,7 +90,7 @@ func (m *SelectCategoryMode) KeyboardHandler(key string) {
 		store.Actions <- ChangeMode{Mode: nextMode}
 		store.Actions <- Backspace{Buffer: m.Buffer}
 	default:
-		store.Actions <- TypeKey{Key: key, Buffer: m.Buffer}
+		store.Actions <- TypeKey{Key: convertKey(key)}
 	}
 }
 

@@ -2,7 +2,7 @@ package main
 
 // Backspace action
 type Backspace struct {
-	Buffer *TextBuffer
+	Buffer TextBuffer
 }
 
 // Apply the Backspace
@@ -16,17 +16,31 @@ func (action Backspace) Apply(state *AppState) {
 
 // TypeKey types a key
 type TypeKey struct {
-	Key    string
-	Buffer *TextBuffer
+	Key string
 }
 
 // Apply the Keystroke
 func (action TypeKey) Apply(state *AppState) {
-	action.Buffer.Text = action.Buffer.Text + action.Key
+	selectCategoryMode, ok := state.CurrentMode.(SelectCategoryMode)
+	if ok {
+		text := selectCategoryMode.Buffer.Text
+		text = text + action.Key
+		selectCategoryMode.Buffer.Text = text
+		state.CurrentMode = selectCategoryMode
+	}
 }
 
 // TextBuffer provides an abstraction over editing text
 type TextBuffer struct {
 	Cursor int
 	Text   string
+}
+
+func convertKey(key string) string {
+	switch key {
+	case "<space>":
+		return " "
+	default:
+		return key
+	}
 }
