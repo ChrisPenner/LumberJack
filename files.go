@@ -10,18 +10,31 @@ type File struct {
 	Active bool
 }
 
-func initFiles(state *AppState) {
+// InitFiles sets up the status bar
+type InitFiles struct {
+}
+
+// Apply the InitFiles
+func (action InitFiles) Apply(state *AppState) {
 	for _, fileName := range os.Args[1:] {
 		newFile := &File{Name: fileName}
 		state.Files = append(state.Files, newFile)
 		state.LogViews.Files = state.Files
 		go addTail(fileName, func(newLine string) {
-			state.Lock()
-			newFile.Lines = append(newFile.Lines, newLine)
-			renderFlag = true
-			state.Unlock()
+			store.Actions <- AppendLine{File: newFile, Line: newLine}
 		})
 	}
+}
+
+// AppendLine to file
+type AppendLine struct {
+	File *File
+	Line string
+}
+
+// Apply the AppendLine
+func (action AppendLine) Apply(state *AppState) {
+	action.File.Lines = append(action.File.Lines, action.Line)
 }
 
 func addTail(fileName string, callback func(string)) {

@@ -1,14 +1,7 @@
 package main
 
-import "sync"
-
-func initState(state *AppState) {
-	state.CurrentMode = NewNormalMode(state)
-}
-
 // AppState contains global state
 type AppState struct {
-	sync.Mutex
 	CurrentMode        Mode
 	LogViews           LogViews
 	Files              []*File
@@ -17,4 +10,13 @@ type AppState struct {
 	SelectCategoryMode SelectCategoryMode
 	HandleKeypress     func(string)
 	textBuffer         string
+}
+
+// InitState sets up the status bar
+type InitState struct {
+}
+
+// Apply the InitState
+func (action InitState) Apply(state *AppState) {
+	state.CurrentMode = NewNormalMode()
 }

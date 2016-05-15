@@ -15,3 +15,12 @@ func (s StatusBar) Display() *ui.Row {
 	par.TextFgColor = ui.ColorCyan
 	return ui.NewRow(ui.NewCol(12, 0, par))
 }
+
+// InitStatusBar sets up the status bar
+type InitStatusBar struct {
+}
+
+// Apply the InitStatusBar
+func (action InitStatusBar) Apply(state *AppState) {
+	state.StatusBar = StatusBar{Text: "NewText!"}
+}

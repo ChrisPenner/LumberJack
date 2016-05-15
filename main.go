@@ -2,20 +2,19 @@ package main
 
 import ui "github.com/gizak/termui"
 import "strings"
-import "time"
 
 const statusBarHeight = 1
 const categoriesHeight = 1
 const numColumns = 12
 
-var renderFlag = true
-var updateChan = make(chan func(*AppState))
+var store *Store
 
 func logViewHeight() int {
 	return ui.TermHeight() - categoriesHeight - statusBarHeight
 }
 
-func render(state *AppState) {
+// Render the application as a function of state
+func Render(state *AppState) {
 	ui.Body.Rows = []*ui.Row{
 		state.Categories.Display(),
 		state.LogViews.Display(logViewHeight()),
@@ -24,20 +23,7 @@ func render(state *AppState) {
 	ui.Body.Width = ui.TermWidth()
 	ui.Body.Align()
 	ui.Render(ui.Body)
-	state.CurrentMode.Render()
-}
-
-func renderLoop(state *AppState) {
-	for {
-		if !renderFlag {
-			time.Sleep(50 * time.Millisecond)
-			continue
-		}
-		state.Lock()
-		render(state)
-		renderFlag = false
-		state.Unlock()
-	}
+	state.CurrentMode.Render(state)
 }
 
 func initUI() {
@@ -45,11 +31,6 @@ func initUI() {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func initStatusBar(state *AppState) {
-	statusBar := StatusBar{Text: "StatusBar!!"}
-	state.StatusBar = statusBar
 }
 
 func displayCategories(categories []string) *ui.Par {
@@ -64,32 +45,24 @@ func main() {
 	defer ui.Close()
 
 	state := new(AppState)
-	initState(state)
-	initFiles(state)
-	initCategories(state)
-	initStatusBar(state)
+
+	store = NewStore()
+	go store.ReduceLoop(state)
+	store.Actions <- InitState{}
+	store.Actions <- InitFiles{}
+	store.Actions <- InitCategories{}
+	store.Actions <- InitStatusBar{}
+
 	ui.Handle("/sys/kbd/C-c", func(ui.Event) {
 		ui.StopLoop()
 	})
-	ui.Handle("/sys/kbd/<enter>", func(ui.Event) {
-		state.Lock()
-		defer state.Unlock()
-		state.CurrentMode = state.CurrentMode.Next()(state)
-		renderFlag = true
-	})
 	ui.Handle("/sys/kbd", func(e ui.Event) {
 		key := e.Data.(ui.EvtKbd).KeyStr
-		state.Lock()
-		defer state.Unlock()
-		state.CurrentMode.KeyboardHandler(key)
-		state.StatusBar.Text = key
-		renderFlag = true
+		store.Actions <- KeyPress{Key: key}
 	})
 	ui.Handle("/sys/wnd/resize", func(ui.Event) {
-		state.Lock()
-		defer state.Unlock()
-		renderFlag = true
+		// Force rerender
+		store.Actions <- NullAction{}
 	})
-	go renderLoop(state)
 	ui.Loop()
 }
