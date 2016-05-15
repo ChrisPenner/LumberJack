@@ -4,19 +4,17 @@ package main
 type AppState struct {
 	CurrentMode        Mode
 	LogViews           LogViews
-	Files              []*File
+	Files              map[string]File
 	Categories         Categories
 	StatusBar          StatusBar
 	SelectCategoryMode SelectCategoryMode
 	HandleKeypress     func(string)
-	textBuffer         string
 }
 
-// InitState sets up the status bar
-type InitState struct {
-}
-
-// Apply the InitState
-func (action InitState) Apply(state *AppState) {
+// NewAppState constructs and appstate
+func NewAppState() *AppState {
+	state := new(AppState)
 	state.CurrentMode = NewNormalMode()
+	state.Files = make(map[string]File)
+	return state
 }

@@ -17,7 +17,7 @@ func logViewHeight() int {
 func Render(state *AppState) {
 	ui.Body.Rows = []*ui.Row{
 		state.Categories.Display(),
-		state.LogViews.Display(logViewHeight()),
+		state.LogViews.Display(state.Files, logViewHeight()),
 		state.StatusBar.Display(),
 	}
 	ui.Body.Width = ui.TermWidth()
@@ -44,14 +44,14 @@ func main() {
 	initUI()
 	defer ui.Close()
 
-	state := new(AppState)
-
+	state := NewAppState()
 	store = NewStore()
 	go store.ReduceLoop(state)
-	store.Actions <- InitState{}
-	store.Actions <- InitFiles{}
-	store.Actions <- InitCategories{}
-	store.Actions <- InitStatusBar{}
+
+	store.Actions <- initFiles{}
+	store.Actions <- initLogViews{}
+	store.Actions <- initCategories{}
+	store.Actions <- initStatusBar{}
 
 	ui.Handle("/sys/kbd/C-c", func(ui.Event) {
 		ui.StopLoop()
@@ -62,7 +62,7 @@ func main() {
 	})
 	ui.Handle("/sys/wnd/resize", func(ui.Event) {
 		// Force rerender
-		store.Actions <- NullAction{}
+		store.Actions <- render{}
 	})
 	ui.Loop()
 }

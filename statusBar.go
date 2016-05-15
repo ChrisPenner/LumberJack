@@ -16,11 +16,9 @@ func (s StatusBar) Display() *ui.Row {
 	return ui.NewRow(ui.NewCol(12, 0, par))
 }
 
-// InitStatusBar sets up the status bar
-type InitStatusBar struct {
+type initStatusBar struct {
 }
 
-// Apply the InitStatusBar
-func (action InitStatusBar) Apply(state *AppState) {
+func (action initStatusBar) Apply(state *AppState) {
 	state.StatusBar = StatusBar{Text: "NewText!"}
 }

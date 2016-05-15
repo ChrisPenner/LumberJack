@@ -26,9 +26,10 @@ type Action interface {
 	Apply(*AppState)
 }
 
-// NullAction does nothing
-type NullAction struct{}
+// type nullAction struct{}
 
-// Apply the NullAction
-func (action NullAction) Apply(state *AppState) {
-}
+// func (action nullAction) Apply(state *AppState) {}
+
+type render struct{}
+
+func (action render) Apply(state *AppState) {}

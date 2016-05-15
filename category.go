@@ -16,12 +16,10 @@ func (c Categories) Display() *ui.Row {
 	return ui.NewRow(ui.NewCol(12, 0, par))
 }
 
-// InitCategories sets up the categories
-type InitCategories struct {
+type initCategories struct {
 }
 
-// Apply InitCategories
-func (action InitCategories) Apply(state *AppState) {
+func (action initCategories) Apply(state *AppState) {
 	var fileNames []string
 	for _, file := range state.Files {
 		fileNames = append(fileNames, file.Name)

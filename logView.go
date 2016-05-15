@@ -1,34 +1,31 @@
 package main
 
 import ui "github.com/gizak/termui"
+import "os"
 
-// Display returns a list object representing the file
-func (f File) Display(height int) *ui.List {
-	list := ui.NewList()
-	list.Height = height
-	if f.Active {
-		list.BorderFg = ui.ColorWhite
-	} else {
-		list.BorderFg = ui.ColorYellow
+type initLogViews struct{}
+
+func (action initLogViews) Apply(state *AppState) {
+	var fileNames []string
+	for _, name := range os.Args[1:] {
+		fileNames = append(fileNames, name)
+		if len(fileNames) == 2 {
+			break
+		}
 	}
-	list.BorderLabel = f.Name
-	sliceStart := len(f.Lines) - (height - 2)
-	if sliceStart < 0 {
-		sliceStart = 0
-	}
-	list.Items = f.Lines[sliceStart:]
-	return list
+	state.LogViews.viewNames = fileNames
 }
 
 // LogViews is a list of Files
 type LogViews struct {
-	Files []*File
+	viewNames []string
 }
 
 // Display returns a Row object representing all of the logViews
-func (lv LogViews) Display(height int) *ui.Row {
+func (lv LogViews) Display(files map[string]File, height int) *ui.Row {
 	listBlocks := []*ui.List{}
-	for _, file := range lv.Files {
+	for _, name := range lv.viewNames {
+		file := files[name]
 		logView := file.Display(height)
 		logView.BorderLeft = false
 		listBlocks = append(listBlocks, logView)
@@ -46,12 +43,12 @@ func (lv LogViews) Display(height int) *ui.Row {
 }
 
 // Select the File at index i
-func (lv LogViews) Select(i int) {
-	if len(lv.Files) <= i || i < 0 {
-		return
-	}
-	for _, file := range lv.Files {
-		file.Active = false
-	}
-	lv.Files[i].Active = true
-}
+// func (lv LogViews) Select(i int) {
+// 	if len(lv.Files) <= i || i < 0 {
+// 		return
+// 	}
+// 	for _, file := range lv.Files {
+// 		file.Active = false
+// 	}
+// 	lv.Files[i].Active = true
+// }

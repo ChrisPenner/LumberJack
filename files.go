@@ -2,6 +2,7 @@ package main
 
 import "os"
 import tail "github.com/hpcloud/tail"
+import ui "github.com/gizak/termui"
 
 // File contains the lines of a given file
 type File struct {
@@ -10,34 +11,51 @@ type File struct {
 	Active bool
 }
 
-// InitFiles sets up the status bar
-type InitFiles struct {
+// Display returns a list object representing the file
+func (f File) Display(height int) *ui.List {
+	list := ui.NewList()
+	list.Height = height
+	if f.Active {
+		list.BorderFg = ui.ColorWhite
+	} else {
+		list.BorderFg = ui.ColorYellow
+	}
+	list.BorderLabel = f.Name
+	sliceStart := len(f.Lines) - (height - 2)
+	if sliceStart < 0 {
+		sliceStart = 0
+	}
+	list.Items = f.Lines[sliceStart:]
+	return list
 }
 
-// Apply the InitFiles
-func (action InitFiles) Apply(state *AppState) {
+type initFiles struct {
+}
+
+func (action initFiles) Apply(state *AppState) {
 	for _, fileName := range os.Args[1:] {
-		newFile := &File{Name: fileName}
-		state.Files = append(state.Files, newFile)
-		state.LogViews.Files = state.Files
-		go addTail(fileName, func(newLine string) {
-			store.Actions <- AppendLine{File: newFile, Line: newLine}
+		newFile := File{Name: fileName}
+		state.Files[fileName] = newFile
+		go addTail(fileName, func(innerFileName string, newLine string) {
+			store.Actions <- AppendLine{FileName: innerFileName, Line: newLine}
 		})
 	}
 }
 
 // AppendLine to file
 type AppendLine struct {
-	File *File
-	Line string
+	FileName string
+	Line     string
 }
 
 // Apply the AppendLine
 func (action AppendLine) Apply(state *AppState) {
-	action.File.Lines = append(action.File.Lines, action.Line)
+	file := state.Files[action.FileName]
+	file.Lines = append(file.Lines, action.Line)
+	state.Files[action.FileName] = file
 }
 
-func addTail(fileName string, callback func(string)) {
+func addTail(fileName string, callback func(string, string)) {
 	t, err := tail.TailFile(fileName, tail.Config{
 		Follow:    true,
 		Logger:    tail.DiscardingLogger,
@@ -47,6 +65,6 @@ func addTail(fileName string, callback func(string)) {
 		panic(err)
 	}
 	for line := range t.Lines {
-		callback(line.Text)
+		callback(fileName, line.Text)
 	}
 }
