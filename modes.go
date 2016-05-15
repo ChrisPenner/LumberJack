@@ -84,11 +84,11 @@ func (m SelectCategoryMode) Render(state *AppState) {
 func (m SelectCategoryMode) KeyboardHandler(key string) {
 	switch key {
 	case "C-8":
-		store.Actions <- Backspace{Buffer: m.Buffer}
+		store.Actions <- Backspace{}
 	case "<enter>":
 		nextMode := NewNormalMode()
 		store.Actions <- ChangeMode{Mode: nextMode}
-		store.Actions <- Backspace{Buffer: m.Buffer}
+		store.Actions <- Backspace{}
 	default:
 		store.Actions <- TypeKey{Key: convertKey(key)}
 	}
