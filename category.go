@@ -8,6 +8,14 @@ type Categories struct {
 	Items []string
 }
 
+func initCategories(state *AppState) {
+	var fileNames []string
+	for _, file := range state.Files {
+		fileNames = append(fileNames, file.Name)
+	}
+	state.Categories = Categories{Items: fileNames}
+}
+
 // Display returns a par for the categories
 func (c Categories) Display() *ui.Row {
 	par := ui.NewPar(strings.Join(c.Items, ", "))

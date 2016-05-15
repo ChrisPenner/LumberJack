@@ -2,13 +2,6 @@ package main
 
 import ui "github.com/gizak/termui"
 
-// File contains the lines of a given file
-type File struct {
-	Name   string
-	Lines  []string
-	Active bool
-}
-
 // Display returns a list object representing the file
 func (f File) Display(height int) *ui.List {
 	list := ui.NewList()
