@@ -1,8 +1,11 @@
 package main
 
+import "os"
+
 // AppState contains global state
 type AppState struct {
 	CurrentMode          string
+	CommandLineArgs      []string
 	LogViews             LogViews
 	Files                map[string]File
 	Categories           Categories
@@ -15,5 +18,6 @@ type AppState struct {
 func NewAppState() AppState {
 	files := make(map[string]File)
 	state := AppState{CurrentMode: normalMode, Files: files}
+	state.CommandLineArgs = os.Args[1:]
 	return state
 }

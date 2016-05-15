@@ -1,6 +1,5 @@
 package main
 
-import "os"
 import tail "github.com/hpcloud/tail"
 import ui "github.com/gizak/termui"
 
@@ -9,6 +8,20 @@ type File struct {
 	Name   string
 	Lines  []string
 	Active bool
+}
+
+// WatchFile Action
+type WatchFile struct {
+	FileName string
+}
+
+// Apply WatchFile
+func (action WatchFile) Apply(state AppState) AppState {
+	addNewLine := func(fileName string, newLine string) {
+		store.Actions <- AppendLine{FileName: fileName, Line: newLine}
+	}
+	go tailFile(action.FileName, addNewLine)
+	return state
 }
 
 // Display returns a list object representing the file
@@ -33,12 +46,10 @@ type initFiles struct {
 }
 
 func (action initFiles) Apply(state AppState) AppState {
-	for _, fileName := range os.Args[1:] {
+	for _, fileName := range state.CommandLineArgs {
 		newFile := File{Name: fileName}
 		state.Files[fileName] = newFile
-		go addTail(fileName, func(innerFileName string, newLine string) {
-			store.Actions <- AppendLine{FileName: innerFileName, Line: newLine}
-		})
+		store.Actions <- WatchFile{FileName: fileName}
 	}
 	return state
 }
@@ -57,7 +68,7 @@ func (action AppendLine) Apply(state AppState) AppState {
 	return state
 }
 
-func addTail(fileName string, callback func(string, string)) {
+func tailFile(fileName string, callback func(string, string)) {
 	t, err := tail.TailFile(fileName, tail.Config{
 		Follow:    true,
 		Logger:    tail.DiscardingLogger,
