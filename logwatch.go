@@ -5,15 +5,17 @@ import tail "github.com/hpcloud/tail"
 import "strings"
 import "os"
 import "time"
+import "sync"
 
 const statusBarHeight = 1
 const categoriesHeight = 1
 const numColumns = 12
 
-var renderFlag = false
+var renderFlag = true
 var updateChan = make(chan func(*appState))
 
 type appState struct {
+	sync.Mutex
 	LogViews   LogViews
 	Categories Categories
 	StatusBar  StatusBar
@@ -43,40 +45,35 @@ func initFiles(state *appState) {
 		newFile.Name = fileName
 		state.LogViews.Files = append(state.LogViews.Files, newFile)
 		go addTail(fileName, func(newLine string) {
-			updateChan <- func(state *appState) {
-				newFile.Lines = append(newFile.Lines, newLine)
-				renderFlag = true
-			}
+			state.Lock()
+			newFile.Lines = append(newFile.Lines, newLine)
+			renderFlag = true
+			state.Unlock()
 		})
 	}
 }
 
-func updateRenderLoop(state *appState, update chan func(*appState)) {
+func render(state *appState) {
+	ui.Body.Rows = []*ui.Row{
+		state.Categories.Display(),
+		state.LogViews.Display(logViewHeight()),
+		state.StatusBar.Display(),
+	}
+	ui.Body.Width = ui.TermWidth()
+	ui.Body.Align()
+	ui.Render(ui.Body)
+}
+
+func renderLoop(state *appState) {
 	for {
-		// Confusing way to guarantee thread safety on state edits
-		debounce := time.After(50 * time.Millisecond)
-		for {
-			select {
-			case <-debounce:
-				break
-			case f := <-update:
-				f(state)
-				continue
-			}
-			break
-		}
 		if !renderFlag {
+			time.Sleep(50 * time.Millisecond)
 			continue
 		}
-		ui.Body.Rows = []*ui.Row{
-			state.Categories.Display(),
-			state.LogViews.Display(logViewHeight()),
-			state.StatusBar.Display(),
-		}
-		ui.Body.Width = ui.TermWidth()
-		ui.Body.Align()
-		ui.Render(ui.Body)
+		state.Lock()
+		render(state)
 		renderFlag = false
+		state.Unlock()
 	}
 }
 
@@ -111,7 +108,6 @@ func main() {
 	initFiles(state)
 	initCategories(state)
 	initStatusBar(state)
-	renderFlag = true
 	// ui.Handle("/sys/mouse/click", func(e ui.Event) {
 	// 	state.StatusBar.Text = e.Path
 	// 	renderFlag = true
@@ -131,10 +127,11 @@ func main() {
 	// 	state.StatusBar.Text = "Click!"
 	// 	renderFlag = true
 	// })
-	// ui.Handle("/sys/wnd/resize", func(ui.Event) {
-	// 	state.StatusBar.Text = "Resize!"
-	// 	renderFlag = true
-	// })
-	go updateRenderLoop(state, updateChan)
+	ui.Handle("/sys/wnd/resize", func(ui.Event) {
+		state.Lock()
+		renderFlag = true
+		state.Unlock()
+	})
+	go renderLoop(state)
 	ui.Loop()
 }

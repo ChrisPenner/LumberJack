@@ -31,7 +31,12 @@ type LogViews struct {
 func (lv LogViews) Display(height int) *ui.Row {
 	listBlocks := []*ui.List{}
 	for _, file := range lv.Files {
-		listBlocks = append(listBlocks, file.Display(height))
+		logView := file.Display(height)
+		logView.BorderLeft = false
+		listBlocks = append(listBlocks, logView)
+	}
+	if len(listBlocks) > 0 {
+		listBlocks[0].BorderLeft = true
 	}
 
 	logViewColumns := []*ui.Row{}
