@@ -5,7 +5,6 @@ import tail "github.com/hpcloud/tail"
 import "strings"
 import "os"
 import "time"
-import "sync"
 
 const statusBarHeight = 1
 const categoriesHeight = 1
@@ -13,13 +12,6 @@ const numColumns = 12
 
 var renderFlag = true
 var updateChan = make(chan func(*appState))
-
-type appState struct {
-	sync.Mutex
-	LogViews   LogViews
-	Categories Categories
-	StatusBar  StatusBar
-}
 
 func logViewHeight() int {
 	return ui.TermHeight() - categoriesHeight - statusBarHeight
@@ -62,6 +54,9 @@ func render(state *appState) {
 	ui.Body.Width = ui.TermWidth()
 	ui.Body.Align()
 	ui.Render(ui.Body)
+	if state.CurrentModal != nil {
+		ui.Render(state.CurrentModal.Display(state))
+	}
 }
 
 func renderLoop(state *appState) {
@@ -105,6 +100,7 @@ func main() {
 	defer ui.Close()
 
 	state := new(appState)
+	initState(state)
 	initFiles(state)
 	initCategories(state)
 	initStatusBar(state)
@@ -118,15 +114,10 @@ func main() {
 	ui.Handle("/sys/kbd/C-c", func(ui.Event) {
 		ui.StopLoop()
 	})
-	// ui.Handle("/sys/kbd/", func(e ui.Event) {
-	// 	keyPress := e.Data.(ui.EvtKbd).KeyStr
-	// 	state.StatusBar.Text = keyPress
-	// 	renderFlag = true
-	// })
-	// ui.Handle("/sys/mouse", func(e ui.Event) {
-	// 	state.StatusBar.Text = "Click!"
-	// 	renderFlag = true
-	// })
+	ui.Handle("/sys/kbd", func(e ui.Event) {
+		key := e.Data.(ui.EvtKbd).KeyStr
+		state.HandleKeypress(key)
+	})
 	ui.Handle("/sys/wnd/resize", func(ui.Event) {
 		state.Lock()
 		renderFlag = true
