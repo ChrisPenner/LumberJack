@@ -17,7 +17,7 @@ func Render(state AppState) {
 	ui.Body.Rows = []*ui.Row{
 		state.Categories.Display(),
 		state.LogViews.Display(state.Files, logViewHeight()),
-		state.StatusBar.Display(),
+		state.StatusBar.Display(state.CurrentMode),
 	}
 	ui.Body.Width = ui.TermWidth()
 	ui.Body.Align()
@@ -46,7 +46,6 @@ func main() {
 	store.Actions <- initFiles{}
 	store.Actions <- initLogViews{}
 	store.Actions <- initCategories{}
-	store.Actions <- initStatusBar{}
 
 	ui.Handle("/sys/kbd/C-c", func(ui.Event) {
 		ui.StopLoop()
