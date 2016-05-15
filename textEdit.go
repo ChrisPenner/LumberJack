@@ -5,7 +5,7 @@ type Backspace struct {
 }
 
 // Apply the Backspace
-func (action Backspace) Apply(state *AppState) {
+func (action Backspace) Apply(state AppState) AppState {
 	switch state.CurrentMode {
 	case selectCategoryMode:
 		text := state.selectCategoryBuffer.Text
@@ -16,6 +16,7 @@ func (action Backspace) Apply(state *AppState) {
 	default:
 		break
 	}
+	return state
 }
 
 // TypeKey types a key
@@ -24,7 +25,7 @@ type TypeKey struct {
 }
 
 // Apply the Keystroke
-func (action TypeKey) Apply(state *AppState) {
+func (action TypeKey) Apply(state AppState) AppState {
 	switch state.CurrentMode {
 	case selectCategoryMode:
 		text := state.selectCategoryBuffer.Text
@@ -34,6 +35,7 @@ func (action TypeKey) Apply(state *AppState) {
 	default:
 		break
 	}
+	return state
 }
 
 // TextBuffer provides an abstraction over editing text

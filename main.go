@@ -13,7 +13,7 @@ func logViewHeight() int {
 }
 
 // Render the application as a function of state
-func Render(state *AppState) {
+func Render(state AppState) {
 	ui.Body.Rows = []*ui.Row{
 		state.Categories.Display(),
 		state.LogViews.Display(state.Files, logViewHeight()),

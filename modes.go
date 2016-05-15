@@ -6,7 +6,8 @@ type ChangeMode struct {
 }
 
 // Apply the ChangeMode
-func (action ChangeMode) Apply(state *AppState) {
+func (action ChangeMode) Apply(state AppState) AppState {
 	state.CurrentMode = action.Mode
 	state.StatusBar.Text = action.Mode
+	return state
 }

@@ -19,6 +19,7 @@ func (s StatusBar) Display() *ui.Row {
 type initStatusBar struct {
 }
 
-func (action initStatusBar) Apply(state *AppState) {
+func (action initStatusBar) Apply(state AppState) AppState {
 	state.StatusBar = StatusBar{Text: "NewText!"}
+	return state
 }

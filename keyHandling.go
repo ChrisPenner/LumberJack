@@ -6,7 +6,7 @@ type KeyPress struct {
 }
 
 // Apply the KeyPress
-func (action KeyPress) Apply(state *AppState) {
+func (action KeyPress) Apply(state AppState) AppState {
 	key := action.Key
 	switch state.CurrentMode {
 	case normalMode:
@@ -27,4 +27,5 @@ func (action KeyPress) Apply(state *AppState) {
 	default:
 		panic(state.CurrentMode)
 	}
+	return state
 }

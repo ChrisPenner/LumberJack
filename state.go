@@ -12,9 +12,8 @@ type AppState struct {
 }
 
 // NewAppState constructs and appstate
-func NewAppState() *AppState {
-	state := new(AppState)
-	state.CurrentMode = normalMode
-	state.Files = make(map[string]File)
+func NewAppState() AppState {
+	files := make(map[string]File)
+	state := AppState{CurrentMode: normalMode, Files: files}
 	return state
 }

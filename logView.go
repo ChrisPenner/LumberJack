@@ -5,7 +5,7 @@ import "os"
 
 type initLogViews struct{}
 
-func (action initLogViews) Apply(state *AppState) {
+func (action initLogViews) Apply(state AppState) AppState {
 	var fileNames []string
 	for _, name := range os.Args[1:] {
 		fileNames = append(fileNames, name)
@@ -14,6 +14,7 @@ func (action initLogViews) Apply(state *AppState) {
 		}
 	}
 	state.LogViews.viewNames = fileNames
+	return state
 }
 
 // LogViews is a list of Files

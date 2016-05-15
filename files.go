@@ -32,7 +32,7 @@ func (f File) Display(height int) *ui.List {
 type initFiles struct {
 }
 
-func (action initFiles) Apply(state *AppState) {
+func (action initFiles) Apply(state AppState) AppState {
 	for _, fileName := range os.Args[1:] {
 		newFile := File{Name: fileName}
 		state.Files[fileName] = newFile
@@ -40,6 +40,7 @@ func (action initFiles) Apply(state *AppState) {
 			store.Actions <- AppendLine{FileName: innerFileName, Line: newLine}
 		})
 	}
+	return state
 }
 
 // AppendLine to file
@@ -49,10 +50,11 @@ type AppendLine struct {
 }
 
 // Apply the AppendLine
-func (action AppendLine) Apply(state *AppState) {
+func (action AppendLine) Apply(state AppState) AppState {
 	file := state.Files[action.FileName]
 	file.Lines = append(file.Lines, action.Line)
 	state.Files[action.FileName] = file
+	return state
 }
 
 func addTail(fileName string, callback func(string, string)) {

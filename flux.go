@@ -13,19 +13,21 @@ func NewStore() *Store {
 }
 
 // ReduceLoop will continually apply actions to state
-func (store Store) ReduceLoop(state *AppState) {
+func (store Store) ReduceLoop(state AppState) {
 	for {
 		action := <-store.Actions
-		action.Apply(state)
+		state = action.Apply(state)
 		Render(state)
 	}
 }
 
 // Action represents a change to take place
 type Action interface {
-	Apply(*AppState)
+	Apply(AppState) AppState
 }
 
 type render struct{}
 
-func (action render) Apply(state *AppState) {}
+func (action render) Apply(state AppState) AppState {
+	return state
+}

@@ -19,10 +19,11 @@ func (c Categories) Display() *ui.Row {
 type initCategories struct {
 }
 
-func (action initCategories) Apply(state *AppState) {
+func (action initCategories) Apply(state AppState) AppState {
 	var fileNames []string
 	for _, file := range state.Files {
 		fileNames = append(fileNames, file.Name)
 	}
 	state.Categories = Categories{Items: fileNames}
+	return state
 }
