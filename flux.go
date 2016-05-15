@@ -26,10 +26,6 @@ type Action interface {
 	Apply(*AppState)
 }
 
-// type nullAction struct{}
-
-// func (action nullAction) Apply(state *AppState) {}
-
 type render struct{}
 
 func (action render) Apply(state *AppState) {}

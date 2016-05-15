@@ -1,7 +1,6 @@
 package main
 
 import ui "github.com/gizak/termui"
-import "strings"
 
 const statusBarHeight = 1
 const categoriesHeight = 1
@@ -34,13 +33,6 @@ func initUI() {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func displayCategories(categories []string) *ui.Par {
-	categoriesPar := ui.NewPar("Categories: " + strings.Join(categories[:], ", "))
-	categoriesPar.Border = false
-	categoriesPar.Height = 1
-	return categoriesPar
 }
 
 func main() {
