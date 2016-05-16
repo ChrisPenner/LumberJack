@@ -12,10 +12,12 @@ func renderSelectCategoryModal(state AppState) {
 
 	par := ui.NewPar("Select a File: " + text + "_")
 	par.Height = 3
+	par.BorderFg = ui.ColorYellow
 
 	list := ui.NewList()
-	list.Items = getLiteralMatches(text, state.Categories.Items)
+	list.Items = state.Categories.getFiltered(state)
 	list.Height = 10
+	list.BorderFg = ui.ColorYellow
 
 	row := ui.NewRow(ui.NewCol(6, 3, par, list))
 	grid := ui.NewGrid(

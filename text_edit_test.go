@@ -3,7 +3,7 @@ package main
 import "testing"
 
 func TestBackSpace(t *testing.T) {
-	state := NewAppState()
+	state := NewAppState([]string{})
 	store := NewStore()
 	state.CurrentMode = selectCategoryMode
 	state.selectCategoryBuffer.Text = "a"
@@ -20,7 +20,7 @@ func TestBackSpace(t *testing.T) {
 }
 
 func TestTypeKey(t *testing.T) {
-	state := NewAppState()
+	state := NewAppState([]string{})
 	store := NewStore()
 	state.CurrentMode = selectCategoryMode
 	state.selectCategoryBuffer.Text = ""

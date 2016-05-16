@@ -16,14 +16,28 @@ func (c Categories) Display() *ui.Row {
 	return ui.NewRow(ui.NewCol(12, 0, par))
 }
 
-type initCategories struct {
+func (c Categories) getFiltered(state AppState) []string {
+	return getLiteralMatches(state.selectCategoryBuffer.Text, c.Items)
 }
 
-func (action initCategories) Apply(state AppState, actions chan<- Action) AppState {
-	var fileNames []string
-	for _, file := range state.Files {
-		fileNames = append(fileNames, file.Name)
+func (c Categories) getBestMatch(state AppState) (string, bool) {
+	filtered := c.getFiltered(state)
+	if len(state.selectCategoryBuffer.Text) == 0 {
+		return "", false
 	}
-	state.Categories = Categories{Items: fileNames}
+	if len(filtered) > 0 {
+		return c.getFiltered(state)[0], true
+	}
+	return "", false
+}
+
+// SelectCategory selects a category
+type SelectCategory struct {
+	FileName string
+}
+
+// Apply SelectCategory
+func (action SelectCategory) Apply(state AppState, actions chan<- Action) AppState {
+	state.LogViews.viewNames[state.selected] = action.FileName
 	return state
 }

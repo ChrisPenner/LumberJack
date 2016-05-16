@@ -1,6 +1,7 @@
 package main
 
 import ui "github.com/gizak/termui"
+import "os"
 
 const statusBarHeight = 1
 const categoriesHeight = 1
@@ -37,13 +38,11 @@ func main() {
 	initUI()
 	defer ui.Close()
 
-	state := NewAppState()
 	store := NewStore()
+	fileNames := os.Args[1:]
+	state := NewAppState(fileNames)
+	addWatchers(fileNames, store.Actions)
 	go store.ReduceLoop(state)
-
-	store.Actions <- initFiles{}
-	store.Actions <- initLogViews{}
-	store.Actions <- initCategories{}
 
 	ui.Handle("/sys/kbd/C-c", func(ui.Event) {
 		ui.StopLoop()

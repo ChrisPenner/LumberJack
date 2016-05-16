@@ -4,18 +4,6 @@ import ui "github.com/gizak/termui"
 
 type initLogViews struct{}
 
-func (action initLogViews) Apply(state AppState, actions chan<- Action) AppState {
-	var fileNames []string
-	for _, name := range state.CommandLineArgs {
-		fileNames = append(fileNames, name)
-		if len(fileNames) == 2 {
-			break
-		}
-	}
-	state.LogViews.viewNames = fileNames
-	return state
-}
-
 // LogViews is a list of Files
 type LogViews struct {
 	viewNames []string

@@ -42,16 +42,10 @@ func (f File) Display(height int) *ui.List {
 	return list
 }
 
-type initFiles struct {
-}
-
-func (action initFiles) Apply(state AppState, actions chan<- Action) AppState {
-	for _, fileName := range state.CommandLineArgs {
-		newFile := File{Name: fileName}
-		state.Files[fileName] = newFile
+func addWatchers(fileNames []string, actions chan<- Action) {
+	for _, fileName := range fileNames {
 		actions <- WatchFile{FileName: fileName}
 	}
-	return state
 }
 
 // AppendLine to file

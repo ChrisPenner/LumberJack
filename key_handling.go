@@ -26,7 +26,12 @@ func (action KeyPress) Apply(state AppState, actions chan<- Action) AppState {
 		case "C-8":
 			actions <- Backspace{}
 		case "<enter>":
+			bestMatch, ok := state.Categories.getBestMatch(state)
+			if ok {
+				actions <- SelectCategory{FileName: bestMatch}
+			}
 			actions <- ChangeMode{Mode: normalMode}
+			state.selectCategoryBuffer.Text = ""
 		default:
 			actions <- TypeKey{Key: convertKey(key)}
 		}

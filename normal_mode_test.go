@@ -3,10 +3,7 @@ package main
 import "testing"
 
 func TestChangeSelection(t *testing.T) {
-	state := NewAppState()
-	state.Files["1"] = File{Name: "1"}
-	state.Files["2"] = File{Name: "2"}
-	state.LogViews.viewNames = []string{"1", "2"}
+	state := NewAppState([]string{"1", "2"})
 	store := NewStore()
 
 	state.selected = 1

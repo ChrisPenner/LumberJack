@@ -2,15 +2,16 @@ package main
 
 import "testing"
 
-func TestInitCategoriesAction(t *testing.T) {
-	state := NewAppState()
+func TestEnterSelectsCategory(t *testing.T) {
+	fileNames := []string{"One", "Two", "Three"}
+	state := NewAppState(fileNames)
 	store := NewStore()
-	state.Files["one"] = File{}
-	state.Files["two"] = File{}
-	newState := initCategories{}.Apply(state, store.Actions)
-	_, hasKey1 := state.Files["one"]
-	_, hasKey2 := state.Files["two"]
-	if len(newState.Files) != 2 || !hasKey1 || !hasKey2 {
+	state.CurrentMode = selectCategoryMode
+	state.selectCategoryBuffer.Text = "On"
+	newState := KeyPress{Key: "<enter>"}.Apply(state, store.Actions)
+	action := <-store.Actions
+	selectCategory, ok := action.(SelectCategory)
+	if !ok || selectCategory.FileName != "One" || newState.LogViews.viewNames[0] != "One" {
 		t.Fail()
 	}
 }

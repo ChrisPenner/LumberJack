@@ -1,11 +1,10 @@
 package main
 
-import "os"
+import "sort"
 
 // AppState contains global state
 type AppState struct {
 	CurrentMode          string
-	CommandLineArgs      []string
 	LogViews             LogViews
 	Files                map[string]File
 	Categories           Categories
@@ -16,9 +15,22 @@ type AppState struct {
 }
 
 // NewAppState constructs and appstate
-func NewAppState() AppState {
+func NewAppState(fileNames []string) AppState {
+	sort.Strings(fileNames)
 	files := make(map[string]File)
 	state := AppState{CurrentMode: normalMode, Files: files}
-	state.CommandLineArgs = os.Args[1:]
+
+	for _, fileName := range fileNames {
+		newFile := File{Name: fileName}
+		state.Files[fileName] = newFile
+	}
+
+	if len(fileNames) < 3 {
+		state.LogViews.viewNames = fileNames[:]
+	} else {
+		state.LogViews.viewNames = fileNames[:2]
+	}
+
+	state.Categories = Categories{Items: fileNames}
 	return state
 }
