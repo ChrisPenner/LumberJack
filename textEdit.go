@@ -5,7 +5,7 @@ type Backspace struct {
 }
 
 // Apply the Backspace
-func (action Backspace) Apply(state AppState) AppState {
+func (action Backspace) Apply(state AppState, actions chan<- Action) AppState {
 	switch state.CurrentMode {
 	case selectCategoryMode:
 		text := state.selectCategoryBuffer.Text
@@ -25,7 +25,7 @@ type TypeKey struct {
 }
 
 // Apply the Keystroke
-func (action TypeKey) Apply(state AppState) AppState {
+func (action TypeKey) Apply(state AppState, actions chan<- Action) AppState {
 	switch state.CurrentMode {
 	case selectCategoryMode:
 		text := state.selectCategoryBuffer.Text

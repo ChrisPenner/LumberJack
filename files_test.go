@@ -3,10 +3,10 @@ package main
 import "testing"
 
 func TestInitFiles(t *testing.T) {
-	store = NewStore()
 	state := NewAppState()
+	store := NewStore()
 	state.CommandLineArgs = []string{"One", "Two"}
-	newState := initFiles{}.Apply(state)
+	newState := initFiles{}.Apply(state, store.Actions)
 	_, hasFile1 := newState.Files["One"]
 	_, hasFile2 := newState.Files["Two"]
 	if !hasFile1 || !hasFile2 {
@@ -16,8 +16,9 @@ func TestInitFiles(t *testing.T) {
 
 func TestAppendLine(t *testing.T) {
 	state := NewAppState()
+	store := NewStore()
 	state.Files = map[string]File{"1": File{Name: "1"}}
-	newState := AppendLine{FileName: "1", Line: "MyLine"}.Apply(state)
+	newState := AppendLine{FileName: "1", Line: "MyLine"}.Apply(state, store.Actions)
 	file := newState.Files["1"]
 	if file.Lines[0] != "MyLine" {
 		t.Fail()

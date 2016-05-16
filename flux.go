@@ -10,10 +10,10 @@ type Store struct {
 }
 
 // NewStore is the Store constructor
-func NewStore() *Store {
+func NewStore() Store {
 	store := Store{}
-	store.Actions = make(chan Action, 10)
-	return &store
+	store.Actions = make(chan Action, 100)
+	return store
 }
 
 // ReduceLoop will continually apply actions to state
@@ -24,7 +24,7 @@ func (store Store) ReduceLoop(state AppState) {
 	for {
 		if rendered {
 			action := <-store.Actions
-			state = action.Apply(state)
+			state = action.Apply(state, store.Actions)
 			rendered = false
 		}
 		select {
@@ -33,7 +33,7 @@ func (store Store) ReduceLoop(state AppState) {
 			debouncer = time.After(renderInterval)
 			rendered = true
 		case action := <-store.Actions:
-			state = action.Apply(state)
+			state = action.Apply(state, store.Actions)
 			rendered = false
 		}
 	}
@@ -41,11 +41,11 @@ func (store Store) ReduceLoop(state AppState) {
 
 // Action represents a change to take place
 type Action interface {
-	Apply(AppState) AppState
+	Apply(AppState, chan<- Action) AppState
 }
 
 type render struct{}
 
-func (action render) Apply(state AppState) AppState {
+func (action render) Apply(state AppState, actions chan<- Action) AppState {
 	return state
 }

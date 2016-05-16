@@ -19,7 +19,7 @@ func (c Categories) Display() *ui.Row {
 type initCategories struct {
 }
 
-func (action initCategories) Apply(state AppState) AppState {
+func (action initCategories) Apply(state AppState, actions chan<- Action) AppState {
 	var fileNames []string
 	for _, file := range state.Files {
 		fileNames = append(fileNames, file.Name)

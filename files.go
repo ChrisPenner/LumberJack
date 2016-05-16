@@ -16,9 +16,9 @@ type WatchFile struct {
 }
 
 // Apply WatchFile
-func (action WatchFile) Apply(state AppState) AppState {
+func (action WatchFile) Apply(state AppState, actions chan<- Action) AppState {
 	addNewLine := func(fileName string, newLine string) {
-		store.Actions <- AppendLine{FileName: fileName, Line: newLine}
+		actions <- AppendLine{FileName: fileName, Line: newLine}
 	}
 	go tailFile(action.FileName, addNewLine)
 	return state
@@ -45,11 +45,11 @@ func (f File) Display(height int) *ui.List {
 type initFiles struct {
 }
 
-func (action initFiles) Apply(state AppState) AppState {
+func (action initFiles) Apply(state AppState, actions chan<- Action) AppState {
 	for _, fileName := range state.CommandLineArgs {
 		newFile := File{Name: fileName}
 		state.Files[fileName] = newFile
-		store.Actions <- WatchFile{FileName: fileName}
+		actions <- WatchFile{FileName: fileName}
 	}
 	return state
 }
@@ -61,7 +61,7 @@ type AppendLine struct {
 }
 
 // Apply the AppendLine
-func (action AppendLine) Apply(state AppState) AppState {
+func (action AppendLine) Apply(state AppState, actions chan<- Action) AppState {
 	file := state.Files[action.FileName]
 	file.Lines = append(file.Lines, action.Line)
 	state.Files[action.FileName] = file

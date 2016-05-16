@@ -6,8 +6,6 @@ const statusBarHeight = 1
 const categoriesHeight = 1
 const numColumns = 12
 
-var store *Store
-
 func logViewHeight() int {
 	return ui.TermHeight() - categoriesHeight - statusBarHeight
 }
@@ -40,7 +38,7 @@ func main() {
 	defer ui.Close()
 
 	state := NewAppState()
-	store = NewStore()
+	store := NewStore()
 	go store.ReduceLoop(state)
 
 	store.Actions <- initFiles{}

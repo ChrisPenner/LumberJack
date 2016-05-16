@@ -6,7 +6,7 @@ type ChangeMode struct {
 }
 
 // Apply the ChangeMode
-func (action ChangeMode) Apply(state AppState) AppState {
+func (action ChangeMode) Apply(state AppState, actions chan<- Action) AppState {
 	state.CurrentMode = action.Mode
 	return state
 }
