@@ -26,9 +26,9 @@ func NewAppState(fileNames []string) AppState {
 	}
 
 	if len(fileNames) < 3 {
-		state.LogViews.viewNames = fileNames[:]
+		state.LogViews = fileNames[:]
 	} else {
-		state.LogViews.viewNames = fileNames[:2]
+		state.LogViews = fileNames[:2]
 	}
 
 	state.Categories = Categories{Items: fileNames}

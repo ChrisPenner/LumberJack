@@ -2,19 +2,16 @@ package main
 
 import ui "github.com/gizak/termui"
 
+// LogViews is a list of viewnames
+type LogViews []string
 type initLogViews struct{}
 
-// LogViews is a list of Files
-type LogViews struct {
-	viewNames []string
-}
-
 // Display returns a Row object representing all of the logViews
-func (lv LogViews) Display(state AppState) *ui.Row {
+func (viewNames LogViews) Display(state AppState) *ui.Row {
 	listBlocks := []*ui.List{}
 	files := state.Files
 	height := logViewHeight()
-	for _, name := range lv.viewNames {
+	for _, name := range viewNames {
 		file := files[name]
 		logView := file.Display(height)
 		logView.BorderLeft = false

@@ -11,7 +11,7 @@ func TestEnterSelectsCategory(t *testing.T) {
 	newState := KeyPress{Key: "<enter>"}.Apply(state, store.Actions)
 	action := <-store.Actions
 	selectCategory, ok := action.(SelectCategory)
-	if !ok || selectCategory.FileName != "One" || newState.LogViews.viewNames[0] != "One" {
+	if !ok || selectCategory.FileName != "One" || newState.LogViews[0] != "One" {
 		t.Fail()
 	}
 }

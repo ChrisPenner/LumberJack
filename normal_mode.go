@@ -4,10 +4,12 @@ const normalMode = "normalMode"
 const left = "left"
 const right = "right"
 
+// ChangeSelection Action
 type ChangeSelection struct {
 	Direction string
 }
 
+// Apply ChangeSelection
 func (action ChangeSelection) Apply(state AppState, actions chan<- Action) AppState {
 	switch action.Direction {
 	case left:
@@ -15,7 +17,7 @@ func (action ChangeSelection) Apply(state AppState, actions chan<- Action) AppSt
 			state.selected--
 		}
 	case right:
-		if state.selected < len(state.LogViews.viewNames)-1 {
+		if state.selected < len(state.LogViews)-1 {
 			state.selected++
 		}
 	}

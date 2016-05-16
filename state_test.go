@@ -30,7 +30,7 @@ func TestNewAppStateSetsCategories(t *testing.T) {
 func TestNewAppStateSetsOneFile(t *testing.T) {
 	fileNames := []string{"One"}
 	state := NewAppState(fileNames)
-	viewNames := state.LogViews.viewNames
+	viewNames := state.LogViews
 	if len(viewNames) != 1 || viewNames[0] != "One" {
 		t.Fail()
 	}
@@ -39,7 +39,7 @@ func TestNewAppStateSetsOneFile(t *testing.T) {
 func TestNewAppStateTakesFirstTwoFilesAsLogViews(t *testing.T) {
 	fileNames := []string{"One", "Two", "Three", "Four"}
 	state := NewAppState(fileNames)
-	viewNames := state.LogViews.viewNames
+	viewNames := state.LogViews
 	if len(viewNames) != 2 {
 		t.Fail()
 	}
@@ -48,7 +48,7 @@ func TestNewAppStateTakesFirstTwoFilesAsLogViews(t *testing.T) {
 func TestNewAppStateSetsLogViews(t *testing.T) {
 	fileNames := []string{"One", "Two"}
 	state := NewAppState(fileNames)
-	viewNames := state.LogViews.viewNames
+	viewNames := state.LogViews
 	if len(viewNames) != len(fileNames) {
 		t.Fail()
 	}
