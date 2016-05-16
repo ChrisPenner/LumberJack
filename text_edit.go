@@ -49,6 +49,10 @@ func convertKey(key string) string {
 	case "<space>":
 		return " "
 	default:
+		// Just ignore weird control sequences
+		if len(key) > 1 {
+			return ""
+		}
 		return key
 	}
 }

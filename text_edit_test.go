@@ -41,4 +41,7 @@ func TestConvertKey(t *testing.T) {
 	if convertKey("a") != "a" {
 		t.Fail()
 	}
+	if convertKey("C-j") != "" {
+		t.Fail()
+	}
 }
