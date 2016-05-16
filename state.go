@@ -6,7 +6,7 @@ import "sort"
 type AppState struct {
 	CurrentMode          string
 	LogViews             LogViews
-	Files                map[string]File
+	Files                Files
 	Categories           Categories
 	StatusBar            StatusBar
 	HandleKeypress       func(string)
@@ -31,6 +31,6 @@ func NewAppState(fileNames []string) AppState {
 		state.LogViews = fileNames[:2]
 	}
 
-	state.Categories = Categories{Items: fileNames}
+	state.Categories = fileNames
 	return state
 }

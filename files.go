@@ -3,6 +3,9 @@ package main
 import tail "github.com/hpcloud/tail"
 import ui "github.com/gizak/termui"
 
+// Files list
+type Files map[string]File
+
 // File contains the lines of a given file
 type File struct {
 	Name   string

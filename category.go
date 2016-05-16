@@ -3,21 +3,19 @@ package main
 import ui "github.com/gizak/termui"
 import "strings"
 
-// Categories contains info about a particular file
-type Categories struct {
-	Items []string
-}
+// Categories list
+type Categories []string
 
 // Display returns a par for the categories
 func (c Categories) Display() *ui.Row {
-	par := ui.NewPar(strings.Join(c.Items, ", "))
+	par := ui.NewPar(strings.Join(c, ", "))
 	par.Border = false
 	par.Height = 1
 	return ui.NewRow(ui.NewCol(12, 0, par))
 }
 
 func (c Categories) getFiltered(state AppState) []string {
-	return getLiteralMatches(state.selectCategoryBuffer.Text, c.Items)
+	return getLiteralMatches(state.selectCategoryBuffer.Text, c)
 }
 
 func (c Categories) getBestMatch(state AppState) (string, bool) {
