@@ -12,6 +12,7 @@ type AppState struct {
 	StatusBar            StatusBar
 	HandleKeypress       func(string)
 	selectCategoryBuffer TextBuffer
+	selected             int
 }
 
 // NewAppState constructs and appstate

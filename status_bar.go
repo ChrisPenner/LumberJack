@@ -8,11 +8,10 @@ type StatusBar struct {
 }
 
 // Display returns a renderable status bar
-func (s StatusBar) Display(mode string) *ui.Row {
+func (s StatusBar) Display() *ui.Row {
 	par := ui.NewPar(s.Text)
 	par.Border = false
 	par.Height = 1
 	par.TextFgColor = ui.ColorCyan
-	par.Text = mode
 	return ui.NewRow(ui.NewCol(12, 0, par))
 }

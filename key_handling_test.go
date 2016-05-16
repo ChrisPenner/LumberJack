@@ -14,6 +14,26 @@ func TestEnterAddsActionFromNormalMode(t *testing.T) {
 	}
 }
 
+func TestSwitchingFocus(t *testing.T) {
+	state := NewAppState()
+	state.CurrentMode = normalMode
+	store := NewStore()
+
+	KeyPress{Key: "<backspace>"}.Apply(state, store.Actions)
+	action := <-store.Actions
+	changeSelection, ok := action.(ChangeSelection)
+	if !ok || changeSelection.Direction != left {
+		t.Fail()
+	}
+
+	KeyPress{Key: "C-l"}.Apply(state, store.Actions)
+	action = <-store.Actions
+	changeSelection, ok = action.(ChangeSelection)
+	if !ok || changeSelection.Direction != right {
+		t.Fail()
+	}
+}
+
 func TestEnterAddsActionFromSelectCategoryMode(t *testing.T) {
 	state := NewAppState()
 	state.CurrentMode = selectCategoryMode

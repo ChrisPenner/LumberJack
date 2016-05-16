@@ -14,8 +14,8 @@ func logViewHeight() int {
 func Render(state AppState) {
 	ui.Body.Rows = []*ui.Row{
 		state.Categories.Display(),
-		state.LogViews.Display(state.Files, logViewHeight()),
-		state.StatusBar.Display(state.CurrentMode),
+		state.LogViews.Display(state),
+		state.StatusBar.Display(),
 	}
 	ui.Body.Width = ui.TermWidth()
 	ui.Body.Align()

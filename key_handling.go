@@ -13,6 +13,13 @@ func (action KeyPress) Apply(state AppState, actions chan<- Action) AppState {
 		switch key {
 		case "<enter>":
 			actions <- ChangeMode{Mode: selectCategoryMode}
+		case "<backspace>":
+			// Actually c-h
+			actions <- ChangeSelection{Direction: left}
+		case "C-l":
+			actions <- ChangeSelection{Direction: right}
+		default:
+			state.StatusBar.Text = key
 		}
 	case selectCategoryMode:
 		switch key {
