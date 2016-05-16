@@ -1,13 +1,12 @@
 package main
 
 import ui "github.com/gizak/termui"
-import "os"
 
 type initLogViews struct{}
 
 func (action initLogViews) Apply(state AppState, actions chan<- Action) AppState {
 	var fileNames []string
-	for _, name := range os.Args[1:] {
+	for _, name := range state.CommandLineArgs {
 		fileNames = append(fileNames, name)
 		if len(fileNames) == 2 {
 			break
@@ -42,14 +41,3 @@ func (lv LogViews) Display(files map[string]File, height int) *ui.Row {
 	}
 	return ui.NewRow(logViewColumns...)
 }
-
-// Select the File at index i
-// func (lv LogViews) Select(i int) {
-// 	if len(lv.Files) <= i || i < 0 {
-// 		return
-// 	}
-// 	for _, file := range lv.Files {
-// 		file.Active = false
-// 	}
-// 	lv.Files[i].Active = true
-// }

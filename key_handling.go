@@ -20,7 +20,6 @@ func (action KeyPress) Apply(state AppState, actions chan<- Action) AppState {
 			actions <- Backspace{}
 		case "<enter>":
 			actions <- ChangeMode{Mode: normalMode}
-			actions <- Backspace{}
 		default:
 			actions <- TypeKey{Key: convertKey(key)}
 		}
