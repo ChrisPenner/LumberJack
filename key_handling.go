@@ -43,8 +43,11 @@ func (action KeyPress) Apply(state AppState, actions chan<- Action) AppState {
 			if ok {
 				actions <- SelectCategory{FileName: bestMatch}
 			}
+			fallthrough
+		case "<escape>":
 			actions <- ChangeMode{Mode: normalMode}
 			state.selectCategoryBuffer.Text = ""
+
 		default:
 			actions <- TypeKey{Key: convertKey(key)}
 		}

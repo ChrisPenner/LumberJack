@@ -46,6 +46,37 @@ func TestEnterSwitchesModesInSelectCategory(t *testing.T) {
 	}
 }
 
+func TestEscapeExitsCategoryModeWithoutSelecting(t *testing.T) {
+	state := NewAppState([]string{"one", "two"}, 10)
+	state.CurrentMode = selectCategoryMode
+	state.selectCategoryBuffer.Text = "on"
+	actions := make(chan Action, 100)
+	KeyPress{Key: "<escape>"}.Apply(state, actions)
+	action := <-actions
+	changeMode, ok := action.(ChangeMode)
+	if !ok || changeMode.Mode != normalMode {
+		t.Fail()
+	}
+}
+
+func TestEnterSelectsCategoryOfBestMatch(t *testing.T) {
+	state := NewAppState([]string{"one", "two"}, 10)
+	state.CurrentMode = selectCategoryMode
+	state.selectCategoryBuffer.Text = "wo" // Submatch
+	actions := make(chan Action, 100)
+	KeyPress{Key: "<enter>"}.Apply(state, actions)
+	action := <-actions
+	selectCategory, ok := action.(SelectCategory)
+	if !ok || (selectCategory != SelectCategory{FileName: "two"}) {
+		t.Fail()
+	}
+	action = <-actions
+	changeMode, ok := action.(ChangeMode)
+	if !ok || changeMode.Mode != normalMode {
+		t.Fail()
+	}
+}
+
 func TestKeyPressAddsTypeKeyInSelectCategoryMode(t *testing.T) {
 	state := NewAppState([]string{}, 10)
 	state.CurrentMode = selectCategoryMode
