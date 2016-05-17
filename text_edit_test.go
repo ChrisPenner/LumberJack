@@ -4,16 +4,16 @@ import "testing"
 
 func TestBackSpace(t *testing.T) {
 	state := NewAppState([]string{}, 10)
-	store := NewStore()
+	actions := make(chan Action, 100)
 	state.CurrentMode = selectCategoryMode
 	state.selectCategoryBuffer.Text = "a"
-	newState := Backspace{}.Apply(state, store.Actions)
+	newState := Backspace{}.Apply(state, actions)
 	if newState.selectCategoryBuffer.Text != "" {
 		t.Fail()
 	}
 
 	// Empty Textfield
-	newState = Backspace{}.Apply(newState, store.Actions)
+	newState = Backspace{}.Apply(newState, actions)
 	if newState.selectCategoryBuffer.Text != "" {
 		t.Fail()
 	}
@@ -21,14 +21,14 @@ func TestBackSpace(t *testing.T) {
 
 func TestTypeKey(t *testing.T) {
 	state := NewAppState([]string{}, 10)
-	store := NewStore()
+	actions := make(chan Action, 100)
 	state.CurrentMode = selectCategoryMode
 	state.selectCategoryBuffer.Text = ""
-	newState := TypeKey{Key: "a"}.Apply(state, store.Actions)
+	newState := TypeKey{Key: "a"}.Apply(state, actions)
 	if newState.selectCategoryBuffer.Text != "a" {
 		t.Fail()
 	}
-	newState = TypeKey{Key: "b"}.Apply(newState, store.Actions)
+	newState = TypeKey{Key: "b"}.Apply(newState, actions)
 	if newState.selectCategoryBuffer.Text != "ab" {
 		t.Fail()
 	}

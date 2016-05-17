@@ -2,12 +2,12 @@ package main
 
 import "testing"
 
-func TestEnterAddsActionFromNormalMode(t *testing.T) {
+func TestEnterSwitchesModesInNormalMode(t *testing.T) {
 	state := NewAppState([]string{}, 10)
 	state.CurrentMode = normalMode
-	store := NewStore()
-	KeyPress{Key: "<enter>"}.Apply(state, store.Actions)
-	action := <-store.Actions
+	actions := make(chan Action, 100)
+	KeyPress{Key: "<enter>"}.Apply(state, actions)
+	action := <-actions
 	changeMode, ok := action.(ChangeMode)
 	if !ok || changeMode.Mode != selectCategoryMode {
 		t.Fail()
@@ -17,29 +17,29 @@ func TestEnterAddsActionFromNormalMode(t *testing.T) {
 func TestSwitchingFocus(t *testing.T) {
 	state := NewAppState([]string{}, 10)
 	state.CurrentMode = normalMode
-	store := NewStore()
+	actions := make(chan Action, 100)
 
-	KeyPress{Key: "<backspace>"}.Apply(state, store.Actions)
-	action := <-store.Actions
+	KeyPress{Key: "<backspace>"}.Apply(state, actions)
+	action := <-actions
 	changeSelection, ok := action.(ChangeSelection)
 	if !ok || changeSelection.Direction != left {
 		t.Fail()
 	}
 
-	KeyPress{Key: "C-l"}.Apply(state, store.Actions)
-	action = <-store.Actions
+	KeyPress{Key: "C-l"}.Apply(state, actions)
+	action = <-actions
 	changeSelection, ok = action.(ChangeSelection)
 	if !ok || changeSelection.Direction != right {
 		t.Fail()
 	}
 }
 
-func TestEnterAddsActionFromSelectCategoryMode(t *testing.T) {
+func TestEnterSwitchesModesInSelectCategory(t *testing.T) {
 	state := NewAppState([]string{}, 10)
 	state.CurrentMode = selectCategoryMode
-	store := NewStore()
-	KeyPress{Key: "<enter>"}.Apply(state, store.Actions)
-	action := <-store.Actions
+	actions := make(chan Action, 100)
+	KeyPress{Key: "<enter>"}.Apply(state, actions)
+	action := <-actions
 	changeMode, ok := action.(ChangeMode)
 	if !ok || changeMode.Mode != normalMode {
 		t.Fail()
@@ -49,9 +49,9 @@ func TestEnterAddsActionFromSelectCategoryMode(t *testing.T) {
 func TestKeyPressAddsTypeKeyInSelectCategoryMode(t *testing.T) {
 	state := NewAppState([]string{}, 10)
 	state.CurrentMode = selectCategoryMode
-	store := NewStore()
-	KeyPress{Key: "a"}.Apply(state, store.Actions)
-	action := <-store.Actions
+	actions := make(chan Action, 100)
+	KeyPress{Key: "a"}.Apply(state, actions)
+	action := <-actions
 	typeKey, ok := action.(TypeKey)
 	if !ok || typeKey.Key != "a" {
 		t.Fail()
@@ -61,9 +61,9 @@ func TestKeyPressAddsTypeKeyInSelectCategoryMode(t *testing.T) {
 func TestKeyPressAddsBackspaceInSelectCategoryMode(t *testing.T) {
 	state := NewAppState([]string{}, 10)
 	state.CurrentMode = selectCategoryMode
-	store := NewStore()
-	KeyPress{Key: "C-8"}.Apply(state, store.Actions)
-	action := <-store.Actions
+	actions := make(chan Action, 100)
+	KeyPress{Key: "C-8"}.Apply(state, actions)
+	action := <-actions
 	_, ok := action.(Backspace)
 	if !ok {
 		t.Fail()
