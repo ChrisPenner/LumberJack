@@ -1,10 +1,5 @@
 package main
 
-type direction string
-
-const up = direction("up")
-const down = direction("down")
-
 // KeyPress sends a keypress
 type KeyPress struct {
 	Key string

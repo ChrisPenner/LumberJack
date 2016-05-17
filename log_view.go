@@ -18,12 +18,10 @@ func (logViews LogViews) display(state AppState) *ui.Row {
 	listBlocks := []*ui.List{}
 	for _, view := range logViews {
 		logView := view.display(state)
-		logView.BorderLeft = false
 		logView.BorderFg = ui.ColorWhite
 		listBlocks = append(listBlocks, logView)
 	}
 	if len(listBlocks) > 0 {
-		listBlocks[0].BorderLeft = true
 		listBlocks[state.selected].BorderFg = ui.ColorMagenta
 	}
 	logViewColumns := []*ui.Row{}

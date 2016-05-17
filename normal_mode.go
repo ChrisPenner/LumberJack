@@ -1,12 +1,19 @@
 package main
 
 const normalMode = "normalMode"
-const left = "left"
-const right = "right"
+
+type direction int
+
+const (
+	left direction = iota
+	right
+	up
+	down
+)
 
 // ChangeSelection Action
 type ChangeSelection struct {
-	Direction string
+	Direction direction
 }
 
 // Apply ChangeSelection
