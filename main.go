@@ -5,18 +5,26 @@ import "os"
 
 const statusBarHeight = 1
 const categoriesHeight = 1
-const numColumns = 12
 
-func logViewHeight() int {
-	return ui.TermHeight() - categoriesHeight - statusBarHeight
+func logViewHeight(termHeight int) int {
+	return termHeight - categoriesHeight - statusBarHeight
+}
+
+type resize struct {
+	Height int
+}
+
+func (action resize) Apply(state AppState, actions chan<- Action) AppState {
+	state.termHeight = action.Height
+	return state
 }
 
 // Render the application as a function of state
 func Render(state AppState) {
 	ui.Body.Rows = []*ui.Row{
 		state.Categories.Display(),
-		state.LogViews.Display(state),
-		state.StatusBar.Display(),
+		state.LogViews.display(state),
+		state.StatusBar.display(),
 	}
 	ui.Body.Width = ui.TermWidth()
 	ui.Body.Align()
@@ -40,7 +48,7 @@ func main() {
 
 	store := NewStore()
 	fileNames := os.Args[1:]
-	state := NewAppState(fileNames)
+	state := NewAppState(fileNames, ui.TermHeight())
 	addWatchers(fileNames, store.Actions)
 	go store.ReduceLoop(state)
 
@@ -51,9 +59,10 @@ func main() {
 		key := e.Data.(ui.EvtKbd).KeyStr
 		store.Actions <- KeyPress{Key: key}
 	})
-	ui.Handle("/sys/wnd/resize", func(ui.Event) {
+	ui.Handle("/sys/wnd/resize", func(e ui.Event) {
+		wndEvent := e.Data.(ui.EvtWnd)
 		// Force rerender
-		store.Actions <- render{}
+		store.Actions <- resize{Height: wndEvent.Height}
 	})
 	ui.Loop()
 }

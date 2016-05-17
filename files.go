@@ -1,16 +1,27 @@
 package main
 
 import tail "github.com/hpcloud/tail"
-import ui "github.com/gizak/termui"
 
 // Files list
 type Files map[string]File
 
 // File contains the lines of a given file
-type File struct {
-	Name   string
-	Lines  []string
-	Active bool
+type File []string
+
+func (state AppState) getSelectedFileName() string {
+	return state.LogViews[state.selected].FileName
+}
+
+func (state AppState) getSelectedView() LogView {
+	return state.LogViews[state.selected]
+}
+
+func (state AppState) getSelectedFile() File {
+	return state.Files[state.getSelectedFileName()]
+}
+
+func (state AppState) getFile(fileName string) File {
+	return state.Files[fileName]
 }
 
 // WatchFile Action
@@ -25,24 +36,6 @@ func (action WatchFile) Apply(state AppState, actions chan<- Action) AppState {
 	}
 	go tailFile(action.FileName, addNewLine)
 	return state
-}
-
-// Display returns a list object representing the file
-func (f File) Display(height int) *ui.List {
-	list := ui.NewList()
-	list.Height = height
-	if f.Active {
-		list.BorderFg = ui.ColorWhite
-	} else {
-		list.BorderFg = ui.ColorYellow
-	}
-	list.BorderLabel = f.Name
-	sliceStart := len(f.Lines) - (height - 2)
-	if sliceStart < 0 {
-		sliceStart = 0
-	}
-	list.Items = f.Lines[sliceStart:]
-	return list
 }
 
 func addWatchers(fileNames []string, actions chan<- Action) {
@@ -60,7 +53,7 @@ type AppendLine struct {
 // Apply the AppendLine
 func (action AppendLine) Apply(state AppState, actions chan<- Action) AppState {
 	file := state.Files[action.FileName]
-	file.Lines = append(file.Lines, action.Line)
+	file = append(file, action.Line)
 	state.Files[action.FileName] = file
 	return state
 }

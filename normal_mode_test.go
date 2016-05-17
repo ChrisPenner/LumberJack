@@ -3,7 +3,7 @@ package main
 import "testing"
 
 func TestChangeSelection(t *testing.T) {
-	state := NewAppState([]string{"1", "2"})
+	state := NewAppState([]string{"1", "2"}, 10)
 	store := NewStore()
 
 	state.selected = 1

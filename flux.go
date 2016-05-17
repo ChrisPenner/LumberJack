@@ -43,9 +43,3 @@ func (store Store) ReduceLoop(state AppState) {
 type Action interface {
 	Apply(AppState, chan<- Action) AppState
 }
-
-type render struct{}
-
-func (action render) Apply(state AppState, actions chan<- Action) AppState {
-	return state
-}

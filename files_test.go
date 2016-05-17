@@ -4,7 +4,7 @@ import "testing"
 
 func TestInitFiles(t *testing.T) {
 	fileNames := []string{"One", "Two"}
-	state := NewAppState(fileNames)
+	state := NewAppState(fileNames, 10)
 	_, hasFile1 := state.Files["One"]
 	_, hasFile2 := state.Files["Two"]
 	if !hasFile1 || !hasFile2 {
@@ -14,12 +14,12 @@ func TestInitFiles(t *testing.T) {
 
 func TestAppendLine(t *testing.T) {
 	fileNames := []string{"One", "Two"}
-	state := NewAppState(fileNames)
+	state := NewAppState(fileNames, 10)
 	store := NewStore()
-	state.Files = map[string]File{"One": File{Name: "One"}}
+	state.Files = map[string]File{"One": File{}}
 	newState := AppendLine{FileName: "One", Line: "MyLine"}.Apply(state, store.Actions)
 	file := newState.Files["One"]
-	if file.Lines[0] != "MyLine" {
+	if file[0] != "MyLine" {
 		t.Fail()
 	}
 }

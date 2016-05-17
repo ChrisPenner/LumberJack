@@ -3,7 +3,7 @@ package main
 import "testing"
 
 func TestEnterAddsActionFromNormalMode(t *testing.T) {
-	state := NewAppState([]string{})
+	state := NewAppState([]string{}, 10)
 	state.CurrentMode = normalMode
 	store := NewStore()
 	KeyPress{Key: "<enter>"}.Apply(state, store.Actions)
@@ -15,7 +15,7 @@ func TestEnterAddsActionFromNormalMode(t *testing.T) {
 }
 
 func TestSwitchingFocus(t *testing.T) {
-	state := NewAppState([]string{})
+	state := NewAppState([]string{}, 10)
 	state.CurrentMode = normalMode
 	store := NewStore()
 
@@ -35,7 +35,7 @@ func TestSwitchingFocus(t *testing.T) {
 }
 
 func TestEnterAddsActionFromSelectCategoryMode(t *testing.T) {
-	state := NewAppState([]string{})
+	state := NewAppState([]string{}, 10)
 	state.CurrentMode = selectCategoryMode
 	store := NewStore()
 	KeyPress{Key: "<enter>"}.Apply(state, store.Actions)
@@ -47,7 +47,7 @@ func TestEnterAddsActionFromSelectCategoryMode(t *testing.T) {
 }
 
 func TestKeyPressAddsTypeKeyInSelectCategoryMode(t *testing.T) {
-	state := NewAppState([]string{})
+	state := NewAppState([]string{}, 10)
 	state.CurrentMode = selectCategoryMode
 	store := NewStore()
 	KeyPress{Key: "a"}.Apply(state, store.Actions)
@@ -59,7 +59,7 @@ func TestKeyPressAddsTypeKeyInSelectCategoryMode(t *testing.T) {
 }
 
 func TestKeyPressAddsBackspaceInSelectCategoryMode(t *testing.T) {
-	state := NewAppState([]string{})
+	state := NewAppState([]string{}, 10)
 	state.CurrentMode = selectCategoryMode
 	store := NewStore()
 	KeyPress{Key: "C-8"}.Apply(state, store.Actions)

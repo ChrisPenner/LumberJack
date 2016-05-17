@@ -8,7 +8,7 @@ type StatusBar struct {
 }
 
 // Display returns a renderable status bar
-func (s StatusBar) Display() *ui.Row {
+func (s StatusBar) display() *ui.Row {
 	par := ui.NewPar(s.Text)
 	par.Border = false
 	par.Height = 1

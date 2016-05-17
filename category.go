@@ -36,6 +36,8 @@ type SelectCategory struct {
 
 // Apply SelectCategory
 func (action SelectCategory) Apply(state AppState, actions chan<- Action) AppState {
-	state.LogViews[state.selected] = action.FileName
+	selectedView := state.LogViews[state.selected]
+	selectedView.FileName = action.FileName
+	state.LogViews[state.selected] = selectedView
 	return state
 }
