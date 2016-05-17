@@ -28,3 +28,43 @@ func TestGetFileSliceMoreVisibleThanLines(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestScroll(t *testing.T) {
+	state := NewAppState([]string{"One"}, 5)
+	// Termheight is 5, logview height will be 3
+	state.Files["One"] = []string{"1", "2", "3", "4", "5"}
+	state.selected = 0
+	actions := make(chan Action, 100)
+	state = Scroll{Direction: up, NumLines: 3}.Apply(state, actions)
+	if state.getSelectedView().offSet != 3 {
+		t.Fail()
+	}
+	state = Scroll{Direction: down, NumLines: 2}.Apply(state, actions)
+	if state.getSelectedView().offSet != 1 {
+		t.Fail()
+	}
+}
+
+func TestScrollDownPastEnd(t *testing.T) {
+	state := NewAppState([]string{"One"}, 5)
+	// Termheight is 5, logview height will be 3
+	state.Files["One"] = []string{"1", "2", "3", "4", "5"}
+	state.selected = 0
+	actions := make(chan Action, 100)
+	state = Scroll{Direction: down, NumLines: 1}.Apply(state, actions)
+	if state.getSelectedView().offSet != 0 {
+		t.Fail()
+	}
+}
+
+func TestScrollUpTooHigh(t *testing.T) {
+	state := NewAppState([]string{"One"}, 5)
+	// Termheight is 5, logview height will be 3
+	state.Files["One"] = []string{"1", "2", "3", "4", "5"}
+	state.selected = 0
+	actions := make(chan Action, 100)
+	state = Scroll{Direction: up, NumLines: 30}.Apply(state, actions)
+	if state.getSelectedView().offSet != 4 {
+		t.Fail()
+	}
+}
