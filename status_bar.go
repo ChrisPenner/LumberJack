@@ -8,8 +8,14 @@ type StatusBar struct {
 }
 
 // Display returns a renderable status bar
-func (s StatusBar) display() *ui.Row {
-	par := ui.NewPar(s.Text)
+func (s StatusBar) display(state AppState) *ui.Row {
+	var text string
+	if state.CurrentMode == search {
+		text = "?: " + state.searchBuffer.text + "_"
+	} else {
+		text = s.Text
+	}
+	par := ui.NewPar(text)
 	par.Border = false
 	par.Height = 1
 	par.TextFgColor = ui.ColorCyan

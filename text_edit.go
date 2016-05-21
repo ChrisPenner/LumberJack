@@ -1,53 +1,47 @@
 package main
 
-// Backspace action
-type Backspace struct {
-}
-
-// Apply the Backspace
-func (action Backspace) Apply(state AppState, actions chan<- Action) AppState {
-	switch state.CurrentMode {
-	case selectCategoryMode:
-		text := state.selectCategoryBuffer.Text
-		if len(text) > 0 {
-			text = text[:len(text)-1]
-		}
-		state.selectCategoryBuffer.Text = text
-	default:
-		break
-	}
-	return state
-}
-
 // TypeKey types a key
-type TypeKey struct {
-	Key string
+type typeKey struct {
+	key string
 }
 
-// Apply the Keystroke
-func (action TypeKey) Apply(state AppState, actions chan<- Action) AppState {
+func (action typeKey) Apply(state AppState, actions chan<- Action) AppState {
 	switch state.CurrentMode {
-	case selectCategoryMode:
-		text := state.selectCategoryBuffer.Text
-		text = text + action.Key
-		state.selectCategoryBuffer.Text = text
-
-	default:
-		break
+	case selectCategory:
+		state.selectCategoryBuffer = state.selectCategoryBuffer.typeKey(action.key)
+	case search:
+		state.searchBuffer = state.searchBuffer.typeKey(action.key)
+		view := state.getSelectedView()
+		state.LogViews[state.selected] = view.updateSearch(state)
 	}
 	return state
 }
 
-// TextBuffer provides an abstraction over editing text
-type TextBuffer struct {
-	Cursor int
-	Text   string
+// textBuffer provides an abstraction over editing text
+type textBuffer struct {
+	cursor int
+	text   string
+}
+
+func (t textBuffer) typeKey(key string) textBuffer {
+	switch key {
+	case "<BS>":
+		// Backspace
+		if len(t.text) > 0 {
+			t.text = t.text[:len(t.text)-1]
+		}
+	default:
+		t.text = t.text + key
+	}
+	return t
 }
 
 func convertKey(key string) string {
 	switch key {
 	case "<space>":
 		return " "
+	case "C-8":
+		return "<BS>"
 	default:
 		// Just ignore weird control sequences
 		if len(key) > 1 {

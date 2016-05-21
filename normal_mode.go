@@ -1,7 +1,5 @@
 package main
 
-const normalMode = "normalMode"
-
 type direction int
 
 const (

@@ -4,7 +4,7 @@ import "testing"
 
 func TestNewAppStateSetsNormalMode(t *testing.T) {
 	actual := NewAppState([]string{}, 10).CurrentMode
-	expected := normalMode
+	expected := normal
 	if actual != expected {
 		t.Fail()
 	}

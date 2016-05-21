@@ -1,7 +1,12 @@
 package main
 
-import ui "github.com/gizak/termui"
-import "strconv"
+import (
+	"fmt"
+	"strconv"
+	"strings"
+
+	ui "github.com/gizak/termui"
+)
 
 // LogViews is a list of viewnames
 type LogViews []LogView
@@ -44,14 +49,29 @@ func (view LogView) display(state AppState) *ui.List {
 	list.BorderLabel = view.FileName
 	file := state.getFile(view.FileName)
 	height := view.numVisibleLines(state)
+	searchTerm := state.searchBuffer.text
+	file = file.highlightMatches(searchTerm)
 	visibleLines := file.getVisibleSlice(view, height)
 	list.Items = visibleLines
 	return list
 }
 
+func (view LogView) updateSearch(state AppState) LogView {
+	file := state.Files[view.FileName]
+	searchResultOffset := file.getSearchResultLine(state.searchBuffer.text, state.searchIndex)
+	if searchResultOffset >= 0 {
+		view.offSet = searchResultOffset - (logViewHeight(state.termHeight) / 2)
+		if view.offSet < 0 {
+			view.offSet = 0
+		}
+	}
+	return view
+}
+
 func (view LogView) numVisibleLines(state AppState) int {
 	return logViewHeight(state.termHeight) - 2
 }
+
 func (file File) getVisibleSlice(view LogView, height int) []string {
 	start := (len(file) - height) - view.offSet
 	if start < 0 {
@@ -62,6 +82,28 @@ func (file File) getVisibleSlice(view LogView, height int) []string {
 		end = len(file)
 	}
 	return file[start:end]
+}
+
+func (file File) getSearchResultLine(term string, _ int) int {
+	for i := range file {
+		line := file[len(file)-i-1]
+		if strings.Contains(line, term) {
+			return i
+		}
+	}
+	return -1
+}
+
+func (file File) highlightMatches(term string) File {
+	if term == "" {
+		return file
+	}
+	var highlightedLines = make(File, len(file))
+	for i, line := range file {
+		hlTerm := fmt.Sprintf("[%s](bg-yellow,fg-black)", term)
+		highlightedLines[i] = strings.Replace(line, term, hlTerm, -1) //hlTerm, -1)
+	}
+	return highlightedLines
 }
 
 // Scroll Action

@@ -3,12 +3,10 @@ package main
 import "regexp"
 import ui "github.com/gizak/termui"
 
-const selectCategoryMode = "selectCategoryMode"
-
 func renderSelectCategoryModal(state AppState) {
 	height := ui.TermHeight()
 	width := ui.TermWidth()
-	text := state.selectCategoryBuffer.Text
+	text := state.selectCategoryBuffer.text
 
 	par := ui.NewPar("Select a File: " + text + "_")
 	par.Height = 3

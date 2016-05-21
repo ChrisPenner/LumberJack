@@ -3,33 +3,28 @@ package main
 import "testing"
 
 func TestBackSpace(t *testing.T) {
-	state := NewAppState([]string{}, 10)
-	actions := make(chan Action, 100)
-	state.CurrentMode = selectCategoryMode
-	state.selectCategoryBuffer.Text = "a"
-	newState := Backspace{}.Apply(state, actions)
-	if newState.selectCategoryBuffer.Text != "" {
+	tb := textBuffer{text: "text"}
+	tb = tb.typeKey("<BS>")
+	if tb.text != "tex" {
 		t.Fail()
 	}
-
-	// Empty Textfield
-	newState = Backspace{}.Apply(newState, actions)
-	if newState.selectCategoryBuffer.Text != "" {
+}
+func TestBackSpaceOnEmptyString(t *testing.T) {
+	tb := textBuffer{text: ""}
+	tb = tb.typeKey("<BS>")
+	if tb.text != "" {
 		t.Fail()
 	}
 }
 
 func TestTypeKey(t *testing.T) {
-	state := NewAppState([]string{}, 10)
-	actions := make(chan Action, 100)
-	state.CurrentMode = selectCategoryMode
-	state.selectCategoryBuffer.Text = ""
-	newState := TypeKey{Key: "a"}.Apply(state, actions)
-	if newState.selectCategoryBuffer.Text != "a" {
+	tb := textBuffer{text: ""}
+	tb = tb.typeKey("a")
+	if tb.text != "a" {
 		t.Fail()
 	}
-	newState = TypeKey{Key: "b"}.Apply(newState, actions)
-	if newState.selectCategoryBuffer.Text != "ab" {
+	tb = tb.typeKey("b")
+	if tb.text != "ab" {
 		t.Fail()
 	}
 }

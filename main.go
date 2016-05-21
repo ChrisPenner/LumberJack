@@ -24,13 +24,12 @@ func Render(state AppState) {
 	ui.Body.Rows = []*ui.Row{
 		state.Categories.Display(),
 		state.LogViews.display(state),
-		state.StatusBar.display(),
+		state.StatusBar.display(state),
 	}
 	ui.Body.Width = ui.TermWidth()
 	ui.Body.Align()
 	ui.Render(ui.Body)
-	switch state.CurrentMode {
-	case selectCategoryMode:
+	if state.CurrentMode == selectCategory {
 		renderSelectCategoryModal(state)
 	}
 }

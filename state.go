@@ -5,21 +5,26 @@ import "sort"
 // AppState contains global state
 type AppState struct {
 	termHeight           int
-	CurrentMode          string
+	CurrentMode          mode
 	LogViews             LogViews
 	Files                Files
 	Categories           Categories
 	StatusBar            StatusBar
 	HandleKeypress       func(string)
-	selectCategoryBuffer TextBuffer
 	selected             int
+	searchIndex          int
+	selectCategoryBuffer textBuffer
+	searchBuffer         textBuffer
 }
 
 // NewAppState constructs and appstate
 func NewAppState(fileNames []string, height int) AppState {
 	sort.Strings(fileNames)
 	files := make(map[string]File)
-	state := AppState{CurrentMode: normalMode, Files: files, termHeight: height}
+	state := AppState{
+		Files:      files,
+		termHeight: height,
+	}
 
 	for _, fileName := range fileNames {
 		state.Files[fileName] = File{}

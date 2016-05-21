@@ -9,10 +9,12 @@ type KeyPress struct {
 func (action KeyPress) Apply(state AppState, actions chan<- Action) AppState {
 	key := action.Key
 	switch state.CurrentMode {
-	case normalMode:
+	case normal:
 		switch key {
 		case "<enter>":
-			actions <- ChangeMode{Mode: selectCategoryMode}
+			actions <- ChangeMode{Mode: selectCategory}
+		case "?", "/":
+			actions <- ChangeMode{Mode: search}
 		case "<backspace>":
 			// Actually c-h
 			actions <- ChangeSelection{Direction: left}
@@ -29,10 +31,8 @@ func (action KeyPress) Apply(state AppState, actions chan<- Action) AppState {
 		default:
 			state.StatusBar.Text = key
 		}
-	case selectCategoryMode:
+	case selectCategory:
 		switch key {
-		case "C-8":
-			actions <- Backspace{}
 		case "<enter>":
 			bestMatch, ok := state.Categories.getBestMatch(state)
 			if ok {
@@ -40,14 +40,24 @@ func (action KeyPress) Apply(state AppState, actions chan<- Action) AppState {
 			}
 			fallthrough
 		case "<escape>":
-			actions <- ChangeMode{Mode: normalMode}
-			state.selectCategoryBuffer.Text = ""
+			actions <- ChangeMode{Mode: normal}
+			state.selectCategoryBuffer.text = ""
 
 		default:
-			actions <- TypeKey{Key: convertKey(key)}
+			actions <- typeKey{key: convertKey(key)}
+		}
+	case search:
+		switch key {
+		case "<enter>":
+			// quit search here...
+			fallthrough
+		case "<escape>":
+			actions <- ChangeMode{Mode: normal}
+		default:
+			actions <- typeKey{key: convertKey(key)}
 		}
 	default:
-		panic(state.CurrentMode)
+		panic("Didn't handle keypress!")
 	}
 	return state
 }
