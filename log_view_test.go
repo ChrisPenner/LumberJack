@@ -68,3 +68,20 @@ func TestScrollUpTooHigh(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestScrollToBottom(t *testing.T) {
+	state := NewAppState([]string{"1"}, 1)
+	state.Files["1"] = []string{"1", "2", "3", "4", "5"}
+	state.LogViews[state.selected].offSet = 4
+	actions := make(chan Action, 100)
+	state = KeyPress{Key: "g"}.Apply(state, actions)
+	action := <-actions
+	scrollAction, ok := action.(Scroll)
+	if !ok || scrollAction.Direction != bottom {
+		t.Error("keypress didn't trigger scroll to bottom")
+	}
+	state = Scroll{Direction: bottom}.Apply(state, actions)
+	if state.getSelectedView().offSet != 0 {
+		t.Fail()
+	}
+}

@@ -11,9 +11,9 @@ func (action KeyPress) Apply(state AppState, actions chan<- Action) AppState {
 	switch state.CurrentMode {
 	case normal:
 		switch key {
-		case "<enter>":
+		case "<space>":
 			actions <- ChangeMode{Mode: selectCategory}
-		case "?", "/":
+		case "?", "/", "<enter>":
 			actions <- ChangeMode{Mode: search}
 		case "<backspace>":
 			// Actually c-h
@@ -28,6 +28,8 @@ func (action KeyPress) Apply(state AppState, actions chan<- Action) AppState {
 			actions <- Scroll{Direction: up, NumLines: state.termHeight / 2}
 		case "f", "C-d":
 			actions <- Scroll{Direction: down, NumLines: state.termHeight / 2}
+		case "g":
+			actions <- Scroll{Direction: bottom}
 		case "n":
 			actions <- findNext{direction: up}
 		case "N":

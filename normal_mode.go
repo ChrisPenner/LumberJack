@@ -7,6 +7,7 @@ const (
 	right
 	up
 	down
+	bottom
 )
 
 // ChangeSelection Action

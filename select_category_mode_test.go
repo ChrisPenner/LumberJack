@@ -6,7 +6,7 @@ func TestEnterSelectCategoryMode(t *testing.T) {
 	state := NewAppState([]string{}, 10)
 	state.CurrentMode = normal
 	actions := make(chan Action, 100)
-	KeyPress{Key: "<enter>"}.Apply(state, actions)
+	KeyPress{Key: "<space>"}.Apply(state, actions)
 	action := <-actions
 	changeMode, ok := action.(ChangeMode)
 	if !ok || changeMode.Mode != selectCategory {

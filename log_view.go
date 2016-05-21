@@ -125,6 +125,8 @@ func (action Scroll) Apply(state AppState, actions chan<- Action) AppState {
 		view.offSet += amount
 	case down:
 		view.offSet -= amount
+	case bottom:
+		view.offSet = 0
 	}
 	if view.offSet > len(file)-view.numVisibleLines(state) {
 		view.offSet = len(file) - view.numVisibleLines(state)
