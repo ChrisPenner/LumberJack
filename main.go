@@ -21,9 +21,15 @@ func (action resize) Apply(state AppState, actions chan<- Action) AppState {
 
 // Render the application as a function of state
 func Render(state AppState) {
+	mainColumns := state.LogViews.display(state)
+	if state.showFilters {
+		filterColumn := state.filters.display(state)
+		mainColumns = append(mainColumns, filterColumn)
+	}
+	mainRow := ui.NewRow(mainColumns...)
 	ui.Body.Rows = []*ui.Row{
 		state.Categories.Display(),
-		state.LogViews.display(state),
+		mainRow,
 		state.StatusBar.display(state),
 	}
 	ui.Body.Width = ui.TermWidth()

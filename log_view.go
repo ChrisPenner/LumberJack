@@ -19,7 +19,7 @@ type LogView struct {
 type initLogViews struct{}
 
 // Display returns a Row object representing all of the logViews
-func (logViews LogViews) display(state AppState) *ui.Row {
+func (logViews LogViews) display(state AppState) []*ui.Row {
 	listBlocks := []*ui.List{}
 	for _, view := range logViews {
 		logView := view.display(state)
@@ -33,11 +33,14 @@ func (logViews LogViews) display(state AppState) *ui.Row {
 		listBlocks[state.selected].BorderFg = ui.ColorMagenta
 	}
 	logViewColumns := []*ui.Row{}
-	numColumnsEach := 6 //numColumns / 1 //len(state.logViews)
+	numColumnsEach := 6
+	if state.showFilters {
+		numColumnsEach = 5 //numColumns / 1 //len(state.logViews)
+	}
 	for _, logViewBlock := range listBlocks {
 		logViewColumns = append(logViewColumns, ui.NewCol(numColumnsEach, 0, logViewBlock))
 	}
-	return ui.NewRow(logViewColumns...)
+	return logViewColumns
 }
 
 func (view LogView) display(state AppState) *ui.List {
@@ -51,10 +54,11 @@ func (view LogView) display(state AppState) *ui.List {
 	}
 	list.BorderLabel = view.FileName
 	file := state.getFile(view.FileName)
+	filteredFile := file.filter(state.filters)
 	height := view.numVisibleLines(state)
 	searchTerm := state.searchBuffer.text
-	file = file.highlightMatches(searchTerm)
-	visibleLines := file.getVisibleSlice(view, height)
+	filteredFile = filteredFile.highlightMatches(searchTerm)
+	visibleLines := filteredFile.getVisibleSlice(view, height)
 	list.Items = visibleLines
 	return list
 }

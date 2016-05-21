@@ -28,7 +28,7 @@ func (action KeyPress) Apply(state AppState, actions chan<- Action) AppState {
 			actions <- Scroll{Direction: down, NumLines: 1}
 		case "b", "C-u":
 			actions <- Scroll{Direction: up, NumLines: state.termHeight / 2}
-		case "f", "C-d":
+		case "C-d":
 			actions <- Scroll{Direction: down, NumLines: state.termHeight / 2}
 		case "G":
 			actions <- Scroll{Direction: bottom}
@@ -36,6 +36,10 @@ func (action KeyPress) Apply(state AppState, actions chan<- Action) AppState {
 			actions <- findNext{direction: up}
 		case "N":
 			actions <- findNext{direction: down}
+		case "f":
+			state.showFilters = !state.showFilters
+		case "!", "@", "#", "$", "%", "^", "&", "(", ")":
+			actions <- toggleFilter{filter: numFromSymbol(key)}
 		default:
 			state.StatusBar.Text = key
 		}
@@ -68,4 +72,30 @@ func (action KeyPress) Apply(state AppState, actions chan<- Action) AppState {
 		panic("Didn't handle keypress!")
 	}
 	return state
+}
+
+func numFromSymbol(key string) int {
+	switch key {
+	case "!":
+		return 0
+	case "@":
+		return 1
+	case "#":
+		return 2
+	case "$":
+		return 3
+	case "%":
+		return 4
+	case "^":
+		return 5
+	case "&":
+		return 6
+	case "*":
+		return 7
+	case "(":
+		return 8
+	case ")":
+		return 9
+	}
+	return 0
 }
