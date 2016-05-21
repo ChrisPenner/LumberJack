@@ -4,6 +4,7 @@ import "testing"
 
 func TestChangeSelection(t *testing.T) {
 	state := NewAppState([]string{"1", "2"}, 10)
+	state.layout = 2
 	actions := make(chan Action, 100)
 
 	state.selected = 1

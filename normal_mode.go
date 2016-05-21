@@ -23,7 +23,7 @@ func (action ChangeSelection) Apply(state AppState, actions chan<- Action) AppSt
 			state.selected--
 		}
 	case right:
-		if state.selected < len(state.LogViews)-1 {
+		if state.selected < state.layout-1 {
 			state.selected++
 		}
 	}

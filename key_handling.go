@@ -1,5 +1,7 @@
 package main
 
+import "strconv"
+
 // KeyPress sends a keypress
 type KeyPress struct {
 	Key string
@@ -40,6 +42,9 @@ func (action KeyPress) Apply(state AppState, actions chan<- Action) AppState {
 			state.showFilters = !state.showFilters
 		case "!", "@", "#", "$", "%", "^", "&", "(", ")":
 			actions <- toggleFilter{filter: numFromSymbol(key)}
+		case "1", "2", "3", "4":
+			choice, _ := strconv.Atoi(key)
+			actions <- changeLayout{choice: choice}
 		default:
 			state.StatusBar.Text = key
 		}

@@ -3,7 +3,7 @@ package main
 import "testing"
 
 func TestEnterSelectCategoryMode(t *testing.T) {
-	state := NewAppState([]string{}, 10)
+	state := NewAppState([]string{"One"}, 10)
 	state.CurrentMode = normal
 	actions := make(chan Action, 100)
 	KeyPress{Key: "<space>"}.Apply(state, actions)
@@ -15,7 +15,7 @@ func TestEnterSelectCategoryMode(t *testing.T) {
 }
 
 func TestEnterSwitchesToNormalModeFromSC(t *testing.T) {
-	state := NewAppState([]string{}, 10)
+	state := NewAppState([]string{"One"}, 10)
 	state.CurrentMode = selectCategory
 	actions := make(chan Action, 100)
 	KeyPress{Key: "<enter>"}.Apply(state, actions)
@@ -58,7 +58,7 @@ func TestEnterSelectsCategoryOfBestMatch(t *testing.T) {
 }
 
 func TestKeyPressAddsTypeKeyInSelectCategoryMode(t *testing.T) {
-	state := NewAppState([]string{}, 10)
+	state := NewAppState([]string{"One"}, 10)
 	state.CurrentMode = selectCategory
 	actions := make(chan Action, 100)
 	KeyPress{Key: "a"}.Apply(state, actions)

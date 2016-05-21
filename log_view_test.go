@@ -87,7 +87,7 @@ func TestScrollToBottom(t *testing.T) {
 }
 
 func TestToggleWrapping(t *testing.T) {
-	state := NewAppState([]string{}, 10)
+	state := NewAppState([]string{"One"}, 10)
 	orig := state.wrap
 	actions := make(chan Action, 100)
 	state = KeyPress{Key: "w"}.Apply(state, actions)

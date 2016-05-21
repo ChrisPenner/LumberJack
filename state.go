@@ -18,6 +18,7 @@ type AppState struct {
 	wrap                 bool
 	filters              filters
 	showFilters          bool
+	layout               int
 }
 
 // NewAppState constructs and appstate
@@ -34,8 +35,8 @@ func NewAppState(fileNames []string, height int) AppState {
 	}
 
 	viewNames := fileNames[:]
-	if len(fileNames) >= 3 {
-		viewNames = viewNames[:2]
+	for i := 0; i < 4; i++ {
+		viewNames = append(viewNames, fileNames[i%len(fileNames)])
 	}
 
 	var views []LogView
@@ -50,5 +51,7 @@ func NewAppState(fileNames []string, height int) AppState {
 		filter{pattern: "INFO"},
 		filter{pattern: "WARNING"},
 	}
+
+	state.layout = 1
 	return state
 }

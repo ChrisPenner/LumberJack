@@ -21,7 +21,10 @@ type initLogViews struct{}
 // Display returns a Row object representing all of the logViews
 func (logViews LogViews) display(state AppState) []*ui.Row {
 	listBlocks := []*ui.List{}
-	for _, view := range logViews {
+	for i, view := range logViews {
+		if i >= state.layout {
+			break
+		}
 		logView := view.display(state)
 		logView.BorderFg = ui.ColorWhite
 		if state.wrap {
@@ -33,12 +36,20 @@ func (logViews LogViews) display(state AppState) []*ui.Row {
 		listBlocks[state.selected].BorderFg = ui.ColorMagenta
 	}
 	logViewColumns := []*ui.Row{}
-	numColumnsEach := 6
+
+	filterSize := 0
 	if state.showFilters {
-		numColumnsEach = 5 //numColumns / 1 //len(state.logViews)
+		filterSize = 1
 	}
+	numColumnsEach := (12 - filterSize) / state.layout
+	leftOver := (12 - filterSize) - (numColumnsEach * state.layout)
 	for _, logViewBlock := range listBlocks {
-		logViewColumns = append(logViewColumns, ui.NewCol(numColumnsEach, 0, logViewBlock))
+		extra := 0
+		if leftOver > 0 {
+			extra = 1
+			leftOver--
+		}
+		logViewColumns = append(logViewColumns, ui.NewCol(numColumnsEach+extra, 0, logViewBlock))
 	}
 	return logViewColumns
 }

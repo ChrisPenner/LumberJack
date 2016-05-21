@@ -27,7 +27,7 @@ func (f filters) display(state AppState) *ui.Row {
 	}
 	filterList.Items = listItems
 	filterList.Height = logViewHeight(state.termHeight)
-	return ui.NewCol(2, 0, filterList)
+	return ui.NewCol(1, 0, filterList)
 }
 
 type toggleFilter struct {

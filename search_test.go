@@ -3,7 +3,7 @@ package main
 import "testing"
 
 func TestEnterSearchMode(t *testing.T) {
-	state := NewAppState([]string{}, 10)
+	state := NewAppState([]string{"One"}, 10)
 	state.CurrentMode = normal
 	actions := make(chan Action, 100)
 	KeyPress{Key: "?"}.Apply(state, actions)
@@ -23,7 +23,7 @@ func TestEnterSearchMode(t *testing.T) {
 }
 
 func TestExitSearchModeEscape(t *testing.T) {
-	state := NewAppState([]string{}, 10)
+	state := NewAppState([]string{"One"}, 10)
 	state.CurrentMode = search
 	actions := make(chan Action, 100)
 	KeyPress{Key: "<escape>"}.Apply(state, actions)
@@ -35,7 +35,7 @@ func TestExitSearchModeEscape(t *testing.T) {
 }
 
 func TestExitSearchModeEnter(t *testing.T) {
-	state := NewAppState([]string{}, 10)
+	state := NewAppState([]string{"One"}, 10)
 	state.CurrentMode = search
 	actions := make(chan Action, 100)
 	KeyPress{Key: "<enter>"}.Apply(state, actions)
@@ -47,7 +47,7 @@ func TestExitSearchModeEnter(t *testing.T) {
 }
 
 func TestSearchAddsTypeKey(t *testing.T) {
-	state := NewAppState([]string{}, 10)
+	state := NewAppState([]string{"One"}, 10)
 	state.CurrentMode = search
 	actions := make(chan Action, 100)
 	KeyPress{Key: "a"}.Apply(state, actions)
@@ -93,7 +93,7 @@ func TestIncrementalSearch(t *testing.T) {
 }
 
 func TestTriggerFindNext(t *testing.T) {
-	state := NewAppState([]string{}, 10)
+	state := NewAppState([]string{"One"}, 10)
 	state.CurrentMode = normal
 	actions := make(chan Action, 100)
 	state = KeyPress{Key: "n"}.Apply(state, actions)
@@ -135,7 +135,7 @@ func TestFindNextMatch(t *testing.T) {
 }
 
 func TestClearsSearchBufferAndIndexOnEnter(t *testing.T) {
-	state := NewAppState([]string{}, 10)
+	state := NewAppState([]string{"One"}, 10)
 	state.searchBuffer.text = "asdf"
 	state.searchIndex = 3
 	state.CurrentMode = normal
