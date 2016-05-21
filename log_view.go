@@ -24,6 +24,9 @@ func (logViews LogViews) display(state AppState) *ui.Row {
 	for _, view := range logViews {
 		logView := view.display(state)
 		logView.BorderFg = ui.ColorWhite
+		if state.wrap {
+			logView.Overflow = "wrap"
+		}
 		listBlocks = append(listBlocks, logView)
 	}
 	if len(listBlocks) > 0 {

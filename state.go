@@ -15,6 +15,7 @@ type AppState struct {
 	searchIndex          int
 	selectCategoryBuffer textBuffer
 	searchBuffer         textBuffer
+	wrap                 bool
 }
 
 // NewAppState constructs and appstate
