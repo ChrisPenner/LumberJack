@@ -12,7 +12,7 @@ func (action typeKey) Apply(state AppState, actions chan<- Action) AppState {
 	case search:
 		state.searchBuffer = state.searchBuffer.typeKey(action.key)
 		view := state.getSelectedView()
-		state.LogViews[state.selected] = view.updateSearch(state)
+		state.LogViews[state.selected] = view.scrollToSearch(state)
 	}
 	return state
 }

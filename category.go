@@ -8,7 +8,6 @@ type Categories []string
 
 // Display returns a par for the categories
 func (c Categories) Display() *ui.Row {
-	//		"[3] [color output](fg-white,bg-green)",
 	par := ui.NewPar(strings.Join(c, " [|](fg-magenta) "))
 	par.Border = false
 	par.Height = 1

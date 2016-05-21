@@ -28,6 +28,10 @@ func (action KeyPress) Apply(state AppState, actions chan<- Action) AppState {
 			actions <- Scroll{Direction: up, NumLines: state.termHeight / 2}
 		case "f", "C-d":
 			actions <- Scroll{Direction: down, NumLines: state.termHeight / 2}
+		case "n":
+			actions <- findNext{direction: up}
+		case "N":
+			actions <- findNext{direction: down}
 		default:
 			state.StatusBar.Text = key
 		}

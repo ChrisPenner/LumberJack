@@ -56,7 +56,7 @@ func (view LogView) display(state AppState) *ui.List {
 	return list
 }
 
-func (view LogView) updateSearch(state AppState) LogView {
+func (view LogView) scrollToSearch(state AppState) LogView {
 	file := state.Files[view.FileName]
 	searchResultOffset := file.getSearchResultLine(state.searchBuffer.text, state.searchIndex)
 	if searchResultOffset >= 0 {
@@ -84,11 +84,14 @@ func (file File) getVisibleSlice(view LogView, height int) []string {
 	return file[start:end]
 }
 
-func (file File) getSearchResultLine(term string, _ int) int {
+func (file File) getSearchResultLine(term string, searchIndex int) int {
 	for i := range file {
 		line := file[len(file)-i-1]
 		if strings.Contains(line, term) {
-			return i
+			if searchIndex <= 0 {
+				return i
+			}
+			searchIndex--
 		}
 	}
 	return -1

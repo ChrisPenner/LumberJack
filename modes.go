@@ -21,6 +21,7 @@ func (action ChangeMode) Apply(state AppState, actions chan<- Action) AppState {
 		sb := state.searchBuffer
 		sb.text = ""
 		state.searchBuffer = sb
+		state.searchIndex = 0
 	}
 	return state
 }
