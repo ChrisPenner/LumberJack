@@ -13,6 +13,9 @@ func (action typeKey) Apply(state AppState, actions chan<- Action) AppState {
 		state.searchBuffer = state.searchBuffer.typeKey(action.key)
 		view := state.getSelectedView()
 		state.LogViews[state.selected] = view.scrollToSearch(state)
+	case editFilter:
+		newText := state.filters[state.selectedFilter].textBuffer.typeKey(action.key)
+		state.filters[state.selectedFilter].textBuffer = newText
 	}
 	return state
 }
@@ -24,6 +27,7 @@ type textBuffer struct {
 }
 
 func (t textBuffer) typeKey(key string) textBuffer {
+	key = convertKey(key)
 	switch key {
 	case "<BS>":
 		// Backspace

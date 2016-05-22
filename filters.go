@@ -9,24 +9,35 @@ import (
 
 type filters []filter
 type filter struct {
-	active  bool
-	pattern string
+	active     bool
+	textBuffer textBuffer
 }
 
 func (f filters) display(state AppState) *ui.Row {
 	filterList := ui.NewList()
 	var listItems []string
 	for i, f := range state.filters {
-		var title string
+		var attrs, title string
 		if f.active {
-			title = fmt.Sprintf("[[%d] %s](fg-green)", i+1, f.pattern)
+			attrs = "fg-green"
 		} else {
-			title = fmt.Sprintf("[[%d] %s](fg-red)", i+1, f.pattern)
+			attrs = "fg-red"
+		}
+		if i == state.selectedFilter && (state.CurrentMode == filterMode || state.CurrentMode == editFilter) {
+			title = fmt.Sprintf("[[%d]](bg-cyan,fg-black) [%s](%s)", i+1, f.textBuffer.text, attrs)
+		} else {
+			title = fmt.Sprintf("[[%d] %s](%s)", i+1, f.textBuffer.text, attrs)
+		}
+		if state.CurrentMode == editFilter && i == state.selectedFilter {
+			title += "_"
 		}
 		listItems = append(listItems, title)
 	}
 	filterList.Items = listItems
 	filterList.Height = logViewHeight(state.termHeight)
+	if state.CurrentMode == filterMode || state.CurrentMode == editFilter {
+		filterList.BorderFg = ui.ColorGreen
+	}
 	return ui.NewCol(1, 0, filterList)
 }
 
@@ -49,7 +60,7 @@ func (f File) filter(filters []filter) File {
 				continue
 			}
 			atLeastOneFilter = true
-			matched, err := regexp.Match(filter.pattern, []byte(line))
+			matched, err := regexp.Match(filter.textBuffer.text, []byte(line))
 			if err != nil {
 				continue
 			}

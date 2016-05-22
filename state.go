@@ -19,6 +19,7 @@ type AppState struct {
 	filters              filters
 	showFilters          bool
 	layout               int
+	selectedFilter       int
 }
 
 // NewAppState constructs and appstate
@@ -48,8 +49,8 @@ func NewAppState(fileNames []string, height int) AppState {
 	state.Categories = fileNames
 
 	state.filters = filters{
-		filter{pattern: "INFO"},
-		filter{pattern: "WARNING"},
+		filter{textBuffer: textBuffer{text: "INFO"}},
+		filter{textBuffer: textBuffer{text: "WARNING"}},
 	}
 
 	state.layout = 1

@@ -15,6 +15,9 @@ func (action KeyPress) Apply(state AppState, actions chan<- Action) AppState {
 		switch key {
 		case "<space>":
 			actions <- ChangeMode{Mode: selectCategory}
+		case "<tab>":
+			actions <- ChangeMode{Mode: filterMode}
+			state.showFilters = true
 		case "?", "/", "<enter>":
 			actions <- ChangeMode{Mode: search}
 		case "w":
@@ -61,7 +64,7 @@ func (action KeyPress) Apply(state AppState, actions chan<- Action) AppState {
 			state.selectCategoryBuffer.text = ""
 
 		default:
-			actions <- typeKey{key: convertKey(key)}
+			actions <- typeKey{key: key}
 		}
 	case search:
 		switch key {
@@ -72,6 +75,32 @@ func (action KeyPress) Apply(state AppState, actions chan<- Action) AppState {
 			actions <- ChangeMode{Mode: normal}
 		default:
 			actions <- typeKey{key: convertKey(key)}
+		}
+	case filterMode:
+		switch key {
+		case "<tab>":
+			actions <- ChangeMode{Mode: normal}
+		case "<enter>":
+			actions <- ChangeMode{Mode: editFilter}
+		case "f":
+			state.showFilters = !state.showFilters
+		case "!", "@", "#", "$", "%", "^", "&", "(", ")":
+			actions <- toggleFilter{filter: numFromSymbol(key)}
+		case "j":
+			if state.selectedFilter < len(state.filters)-1 {
+				state.selectedFilter++
+			}
+		case "k":
+			if state.selectedFilter > 0 {
+				state.selectedFilter--
+			}
+		}
+	case editFilter:
+		switch key {
+		case "<enter>":
+			actions <- ChangeMode{Mode: filterMode}
+		default:
+			actions <- typeKey{key: key}
 		}
 	default:
 		panic("Didn't handle keypress!")

@@ -5,7 +5,7 @@ import "testing"
 func TestFiltering(t *testing.T) {
 	file := File{"one", "twox", "three", "xfour"}
 	filters := []filter{
-		filter{pattern: "x", active: true},
+		filter{textBuffer: textBuffer{text: "x"}, active: true},
 	}
 	filtered := file.filter(filters)
 	expected := File{"twox", "xfour"}

@@ -4,7 +4,7 @@ import "testing"
 
 func TestBackSpace(t *testing.T) {
 	tb := textBuffer{text: "text"}
-	tb = tb.typeKey("<BS>")
+	tb = tb.typeKey("C-8")
 	if tb.text != "tex" {
 		t.Fail()
 	}

@@ -6,6 +6,8 @@ const (
 	normal mode = iota
 	selectCategory
 	search
+	filterMode
+	editFilter
 )
 
 // ChangeMode changes modes
