@@ -13,3 +13,20 @@ func TestFiltering(t *testing.T) {
 		t.Error(filtered)
 	}
 }
+
+func TestToggleFilter(t *testing.T) {
+	state := NewAppState([]string{"one"}, 10)
+	state.filters = filters{
+		filter{active: true},
+	}
+
+	state = state.toggleFilter(0)
+	if state.filters[0].active != false {
+		t.Fail()
+	}
+
+	state = state.toggleFilter(0)
+	if state.filters[0].active != true {
+		t.Fail()
+	}
+}
