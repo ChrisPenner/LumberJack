@@ -50,16 +50,16 @@ func (action toggleFilter) Apply(state AppState, actions chan<- Action) AppState
 	return state
 }
 
-func (f File) filter(filters []filter) File {
+func (f File) filter(filters []filter, height int, offSet int) File {
 	var filteredLines File
-	atLeastOneFilter := false
-	for _, line := range f {
+	for i := range f {
+		// Go through file in reverse
+		line := f[len(f)-i-1]
 		matchFilter := false
 		for _, filter := range filters {
 			if !filter.active {
 				continue
 			}
-			atLeastOneFilter = true
 			matched, err := regexp.Match(filter.textBuffer.text, []byte(line))
 			if err != nil {
 				continue
@@ -70,11 +70,12 @@ func (f File) filter(filters []filter) File {
 			}
 		}
 		if matchFilter {
-			filteredLines = append(filteredLines, line)
+			// Build up file in reverse
+			filteredLines = append([]string{line}, filteredLines...)
+			if len(filteredLines) == height+offSet {
+				break
+			}
 		}
-	}
-	if !atLeastOneFilter {
-		return f
 	}
 	return filteredLines
 }

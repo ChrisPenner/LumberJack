@@ -21,3 +21,13 @@ func TestSwitchingFocus(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestLayout(t *testing.T) {
+	fileNames := []string{"1"}
+	state := NewAppState(fileNames, 10)
+	actions := make(chan Action, 100)
+	state = changeLayout{2}.Apply(state, actions)
+	if state.layout != 2 {
+		t.Fail()
+	}
+}

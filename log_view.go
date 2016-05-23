@@ -65,11 +65,14 @@ func (view LogView) display(state AppState) *ui.List {
 	}
 	list.BorderLabel = view.FileName
 	file := state.getFile(view.FileName)
-	filteredFile := file.filter(state.filters)
 	height := view.numVisibleLines(state)
+	filteredView := file
+	if anyActiveFilters(state.filters) {
+		filteredView = file.filter(state.filters, height, view.offSet)
+	}
 	searchTerm := state.searchBuffer.text
-	filteredFile = filteredFile.highlightMatches(searchTerm)
-	visibleLines := filteredFile.getVisibleSlice(view, height)
+	filteredView = filteredView.highlightMatches(searchTerm)
+	visibleLines := filteredView.getVisibleSlice(view, height)
 	list.Items = visibleLines
 	return list
 }
@@ -155,4 +158,13 @@ func (action Scroll) Apply(state AppState, actions chan<- Action) AppState {
 	state.LogViews[state.selected] = view
 	state.StatusBar.Text = strconv.Itoa(state.getSelectedView().offSet)
 	return state
+}
+
+func anyActiveFilters(filters filters) bool {
+	for _, f := range filters {
+		if f.active {
+			return true
+		}
+	}
+	return false
 }
