@@ -3,7 +3,7 @@ package main
 import "testing"
 
 func TestEnterSearchMode(t *testing.T) {
-	state := NewAppState([]string{"One"}, 10)
+	state := NewAppState([]string{"One"}, 10, 10)
 	state.CurrentMode = normal
 	state = KeyPress{Key: "?"}.Apply(state)
 	if state.CurrentMode != search {
@@ -18,7 +18,7 @@ func TestEnterSearchMode(t *testing.T) {
 }
 
 func TestExitSearchModeEscape(t *testing.T) {
-	state := NewAppState([]string{"One"}, 10)
+	state := NewAppState([]string{"One"}, 10, 10)
 	state.CurrentMode = search
 	state = KeyPress{Key: "<escape>"}.Apply(state)
 	if state.CurrentMode != normal {
@@ -27,7 +27,7 @@ func TestExitSearchModeEscape(t *testing.T) {
 }
 
 func TestExitSearchModeEnter(t *testing.T) {
-	state := NewAppState([]string{"One"}, 10)
+	state := NewAppState([]string{"One"}, 10, 10)
 	state.CurrentMode = search
 	state = KeyPress{Key: "<enter>"}.Apply(state)
 	if state.CurrentMode != normal {
@@ -36,7 +36,7 @@ func TestExitSearchModeEnter(t *testing.T) {
 }
 
 func TestSearchTyping(t *testing.T) {
-	state := NewAppState([]string{"One"}, 10)
+	state := NewAppState([]string{"One"}, 10, 10)
 	state.CurrentMode = search
 	state = KeyPress{Key: "a"}.Apply(state)
 	if state.searchBuffer.text != "a" {
@@ -45,7 +45,7 @@ func TestSearchTyping(t *testing.T) {
 }
 
 func TestTypeKeySetsViewOffsetForSearch(t *testing.T) {
-	state := NewAppState([]string{"1"}, 2)
+	state := NewAppState([]string{"1"}, 2, 10)
 	state.Files["1"] = File{"abc1efg", "test", "other", "things", "out"}
 	state.CurrentMode = search
 	state = state.typeKey("1")
@@ -58,7 +58,7 @@ func TestTypeKeySetsViewOffsetForSearch(t *testing.T) {
 }
 
 func TestIncrementalSearch(t *testing.T) {
-	state := NewAppState([]string{"1"}, 2)
+	state := NewAppState([]string{"1"}, 2, 10)
 	state.Files["1"] = File{"banana", "test", "bana", "ban", "one"}
 	state.CurrentMode = search
 	state.searchBuffer.text = "ba"
@@ -77,7 +77,7 @@ func TestIncrementalSearch(t *testing.T) {
 }
 
 func TestFindNextMatch(t *testing.T) {
-	state := NewAppState([]string{"1"}, 1)
+	state := NewAppState([]string{"1"}, 1, 10)
 	state.Files["1"] = File{"banana", "test", "bana", "ban", "one"}
 	state.CurrentMode = normal
 	state.searchBuffer.text = "ba"
@@ -98,7 +98,7 @@ func TestFindNextMatch(t *testing.T) {
 }
 
 func TestClearsSearchBufferAndIndexOnEnter(t *testing.T) {
-	state := NewAppState([]string{"One"}, 10)
+	state := NewAppState([]string{"One"}, 10, 10)
 	state.searchBuffer.text = "asdf"
 	state.searchIndex = 3
 	state.CurrentMode = normal

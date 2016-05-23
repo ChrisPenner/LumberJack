@@ -32,14 +32,14 @@ func (logViews LogViews) display(state AppState) []*ui.Row {
 		}
 		listBlocks = append(listBlocks, logView)
 	}
-	if len(listBlocks) > 0 {
+	if len(listBlocks) > 0 && (state.CurrentMode == normal || state.CurrentMode == selectCategory) {
 		listBlocks[state.selected].BorderFg = ui.ColorMagenta
 	}
 	logViewColumns := []*ui.Row{}
 
 	filterSize := 0
 	if state.showFilters {
-		filterSize = 1
+		filterSize = getFilterSpan(state.termWidth)
 	}
 	numColumnsEach := (12 - filterSize) / state.layout
 	leftOver := (12 - filterSize) - (numColumnsEach * state.layout)

@@ -5,6 +5,7 @@ import "sort"
 // AppState contains global state
 type AppState struct {
 	termHeight           int
+	termWidth            int
 	CurrentMode          mode
 	LogViews             LogViews
 	Files                Files
@@ -23,12 +24,13 @@ type AppState struct {
 }
 
 // NewAppState constructs and appstate
-func NewAppState(fileNames []string, height int) AppState {
+func NewAppState(fileNames []string, height int, width int) AppState {
 	sort.Strings(fileNames)
 	files := make(map[string]File)
 	state := AppState{
 		Files:      files,
 		termHeight: height,
+		termWidth:  width,
 	}
 
 	for _, fileName := range fileNames {

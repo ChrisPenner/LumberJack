@@ -15,7 +15,7 @@ func TestFiltering(t *testing.T) {
 }
 
 func TestToggleFilter(t *testing.T) {
-	state := NewAppState([]string{"one"}, 10)
+	state := NewAppState([]string{"one"}, 10, 10)
 	state.filters = filters{
 		filter{active: true},
 	}
@@ -28,5 +28,18 @@ func TestToggleFilter(t *testing.T) {
 	state = state.toggleFilter(0)
 	if state.filters[0].active != true {
 		t.Fail()
+	}
+}
+
+func TestSelectingBackToNormalMode(t *testing.T) {
+	state := NewAppState([]string{"one"}, 10, 10)
+	state.layout = 3
+	state.selected = 0
+	state.CurrentMode = filterMode
+
+	state = KeyPress{Key: "<backspace>"}.Apply(state)
+
+	if state.selected != 2 || state.CurrentMode != normal {
+		t.Error(state.selected)
 	}
 }

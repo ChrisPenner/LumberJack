@@ -11,11 +11,13 @@ func logViewHeight(termHeight int) int {
 }
 
 type resize struct {
-	Height int
+	height int
+	width  int
 }
 
 func (action resize) Apply(state AppState) AppState {
-	state.termHeight = action.Height
+	state.termHeight = action.height
+	state.termWidth = action.width
 	return state
 }
 
@@ -53,7 +55,7 @@ func main() {
 
 	store := NewStore()
 	fileNames := os.Args[1:]
-	state := NewAppState(fileNames, ui.TermHeight())
+	state := NewAppState(fileNames, ui.TermHeight(), ui.TermWidth())
 	addWatchers(fileNames, store.Actions)
 	go store.ReduceLoop(state)
 
@@ -67,7 +69,7 @@ func main() {
 	ui.Handle("/sys/wnd/resize", func(e ui.Event) {
 		wndEvent := e.Data.(ui.EvtWnd)
 		// Force rerender
-		store.Actions <- resize{Height: wndEvent.Height}
+		store.Actions <- resize{height: wndEvent.Height, width: wndEvent.Width}
 	})
 	ui.Loop()
 }

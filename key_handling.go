@@ -13,12 +13,11 @@ func (action KeyPress) Apply(state AppState) AppState {
 	switch state.CurrentMode {
 	case normal:
 		switch key {
-		case "<space>":
+		case "<enter>":
 			state = state.changeMode(selectCategory)
 		case "<tab>":
-			state = state.changeMode(filterMode)
-			state.showFilters = true
-		case "?", "/", "<enter>":
+			state.showFilters = !state.showFilters
+		case "?", "/":
 			state = state.changeMode(search)
 		case "w":
 			state.wrap = !state.wrap
@@ -41,8 +40,6 @@ func (action KeyPress) Apply(state AppState) AppState {
 			state = state.findNext(up)
 		case "N":
 			state = state.findNext(down)
-		case "f":
-			state.showFilters = !state.showFilters
 		case "!", "@", "#", "$", "%", "^", "&", "(", ")":
 			state = state.toggleFilter(numFromSymbol(key))
 		case "1", "2", "3", "4":
@@ -79,11 +76,13 @@ func (action KeyPress) Apply(state AppState) AppState {
 	case filterMode:
 		switch key {
 		case "<tab>":
+			state.showFilters = false
 			state = state.changeMode(normal)
 		case "<enter>":
 			state = state.changeMode(editFilter)
-		case "f":
-			state.showFilters = !state.showFilters
+		case "<backspace>":
+			state.selected = state.layout - 1
+			state = state.changeMode(normal)
 		case "!", "@", "#", "$", "%", "^", "&", "(", ")":
 			state = state.toggleFilter(numFromSymbol(key))
 		case "j":

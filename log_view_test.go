@@ -30,7 +30,7 @@ func TestGetFileSliceMoreVisibleThanLines(t *testing.T) {
 }
 
 func TestScroll(t *testing.T) {
-	state := NewAppState([]string{"One"}, 5)
+	state := NewAppState([]string{"One"}, 5, 10)
 	// Termheight is 5, logview height will be 3
 	state.Files["One"] = []string{"1", "2", "3", "4", "5"}
 	state.selected = 0
@@ -45,7 +45,7 @@ func TestScroll(t *testing.T) {
 }
 
 func TestScrollDownPastEnd(t *testing.T) {
-	state := NewAppState([]string{"One"}, 5)
+	state := NewAppState([]string{"One"}, 5, 10)
 	// Termheight is 5, logview height will be 3
 	state.Files["One"] = []string{"1", "2", "3", "4", "5"}
 	state.selected = 0
@@ -56,7 +56,7 @@ func TestScrollDownPastEnd(t *testing.T) {
 }
 
 func TestScrollUpTooHigh(t *testing.T) {
-	state := NewAppState([]string{"One"}, 5)
+	state := NewAppState([]string{"One"}, 5, 10)
 	// Termheight is 5, logview height will be 3
 	state.Files["One"] = []string{"1", "2", "3", "4", "5"}
 	state.selected = 0
@@ -67,7 +67,7 @@ func TestScrollUpTooHigh(t *testing.T) {
 }
 
 func TestScrollToBottom(t *testing.T) {
-	state := NewAppState([]string{"1"}, 1)
+	state := NewAppState([]string{"1"}, 1, 10)
 	state.Files["1"] = []string{"1", "2", "3", "4", "5"}
 	state.LogViews[state.selected].offSet = 4
 	state = state.scroll(bottom, 0)
@@ -77,7 +77,7 @@ func TestScrollToBottom(t *testing.T) {
 }
 
 func TestToggleWrapping(t *testing.T) {
-	state := NewAppState([]string{"One"}, 10)
+	state := NewAppState([]string{"One"}, 10, 10)
 	orig := state.wrap
 	state = KeyPress{Key: "w"}.Apply(state)
 	if state.wrap != (!orig) {

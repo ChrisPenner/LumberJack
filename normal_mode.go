@@ -19,6 +19,8 @@ func (state AppState) changeSelection(direction direction) AppState {
 	case right:
 		if state.selected < state.layout-1 {
 			state.selected++
+		} else if state.showFilters {
+			state = state.changeMode(filterMode)
 		}
 	}
 	return state

@@ -13,8 +13,13 @@ type filter struct {
 	textBuffer textBuffer
 }
 
+func getFilterSpan(termWidth int) int {
+	minWidth := 17
+	columns := 12
+	return (minWidth / ((termWidth / columns) | 1)) + 1
+}
+
 func (f filters) display(state AppState) *ui.Row {
-	filterList := ui.NewList()
 	var listItems []string
 	for i, f := range state.filters {
 		var attrs, title string
@@ -33,12 +38,15 @@ func (f filters) display(state AppState) *ui.Row {
 		}
 		listItems = append(listItems, title)
 	}
+	filterList := ui.NewList()
+	filterList.Overflow = "wrap"
 	filterList.Items = listItems
 	filterList.Height = logViewHeight(state.termHeight)
 	if state.CurrentMode == filterMode || state.CurrentMode == editFilter {
 		filterList.BorderFg = ui.ColorGreen
 	}
-	return ui.NewCol(1, 0, filterList)
+	filterSpan := getFilterSpan(state.termWidth)
+	return ui.NewCol(filterSpan, 0, filterList)
 }
 
 func (state AppState) toggleFilter(filter int) AppState {
