@@ -41,12 +41,8 @@ func (f filters) display(state AppState) *ui.Row {
 	return ui.NewCol(1, 0, filterList)
 }
 
-type toggleFilter struct {
-	filter int
-}
-
-func (action toggleFilter) Apply(state AppState, actions chan<- Action) AppState {
-	state.filters[action.filter].active = !state.filters[action.filter].active
+func (state AppState) toggleFilter(filter int) AppState {
+	state.filters[filter].active = !state.filters[filter].active
 	return state
 }
 

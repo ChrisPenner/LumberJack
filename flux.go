@@ -24,7 +24,7 @@ func (store Store) ReduceLoop(state AppState) {
 	for {
 		if rendered {
 			action := <-store.Actions
-			state = action.Apply(state, store.Actions)
+			state = action.Apply(state)
 			rendered = false
 		}
 		select {
@@ -33,7 +33,7 @@ func (store Store) ReduceLoop(state AppState) {
 			debouncer = time.After(renderInterval)
 			rendered = true
 		case action := <-store.Actions:
-			state = action.Apply(state, store.Actions)
+			state = action.Apply(state)
 			rendered = false
 		}
 	}
@@ -41,5 +41,5 @@ func (store Store) ReduceLoop(state AppState) {
 
 // Action represents a change to take place
 type Action interface {
-	Apply(AppState, chan<- Action) AppState
+	Apply(AppState) AppState
 }

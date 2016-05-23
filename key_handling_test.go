@@ -2,31 +2,27 @@ package main
 
 import "testing"
 
-func TestSwitchingFocus(t *testing.T) {
+func TestSwitchingFocusTooFarLeft(t *testing.T) {
 	state := NewAppState([]string{"One"}, 10)
-	state.CurrentMode = normal
-	actions := make(chan Action, 100)
-
-	KeyPress{Key: "<backspace>"}.Apply(state, actions)
-	action := <-actions
-	changeSelection, ok := action.(ChangeSelection)
-	if !ok || changeSelection.Direction != left {
-		t.Fail()
-	}
-
-	KeyPress{Key: "C-l"}.Apply(state, actions)
-	action = <-actions
-	changeSelection, ok = action.(ChangeSelection)
-	if !ok || changeSelection.Direction != right {
+	state = KeyPress{Key: "<backspace>"}.Apply(state)
+	if state.selected != 0 {
 		t.Fail()
 	}
 }
 
-func TestLayout(t *testing.T) {
+func TestSwitchingFocusToRight(t *testing.T) {
+	state := NewAppState([]string{"One"}, 10)
+	state.layout = 2
+	state = KeyPress{Key: "C-l"}.Apply(state)
+	if state.selected != 1 {
+		t.Fail()
+	}
+}
+
+func TestChangingLayout(t *testing.T) {
 	fileNames := []string{"1"}
 	state := NewAppState(fileNames, 10)
-	actions := make(chan Action, 100)
-	state = changeLayout{2}.Apply(state, actions)
+	state = KeyPress{Key: "2"}.Apply(state)
 	if state.layout != 2 {
 		t.Fail()
 	}

@@ -1,20 +1,15 @@
 package main
 
-// TypeKey types a key
-type typeKey struct {
-	key string
-}
-
-func (action typeKey) Apply(state AppState, actions chan<- Action) AppState {
+func (state AppState) typeKey(key string) AppState {
 	switch state.CurrentMode {
 	case selectCategory:
-		state.selectCategoryBuffer = state.selectCategoryBuffer.typeKey(action.key)
+		state.selectCategoryBuffer = state.selectCategoryBuffer.typeKey(key)
 	case search:
-		state.searchBuffer = state.searchBuffer.typeKey(action.key)
+		state.searchBuffer = state.searchBuffer.typeKey(key)
 		view := state.getSelectedView()
 		state.LogViews[state.selected] = view.scrollToSearch(state)
 	case editFilter:
-		newText := state.filters[state.selectedFilter].textBuffer.typeKey(action.key)
+		newText := state.filters[state.selectedFilter].textBuffer.typeKey(key)
 		state.filters[state.selectedFilter].textBuffer = newText
 	}
 	return state

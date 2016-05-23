@@ -30,17 +30,16 @@ type WatchFile struct {
 }
 
 // Apply WatchFile
-func (action WatchFile) Apply(state AppState, actions chan<- Action) AppState {
+func watchFile(fileName string, actions chan<- Action) {
 	addNewLine := func(fileName string, newLine string) {
 		actions <- AppendLine{FileName: fileName, Line: newLine}
 	}
-	go tailFile(action.FileName, addNewLine)
-	return state
+	go tailFile(fileName, addNewLine)
 }
 
 func addWatchers(fileNames []string, actions chan<- Action) {
 	for _, fileName := range fileNames {
-		actions <- WatchFile{FileName: fileName}
+		watchFile(fileName, actions)
 	}
 }
 
@@ -51,7 +50,7 @@ type AppendLine struct {
 }
 
 // Apply the AppendLine
-func (action AppendLine) Apply(state AppState, actions chan<- Action) AppState {
+func (action AppendLine) Apply(state AppState) AppState {
 	file := state.Files[action.FileName]
 	file = append(file, action.Line)
 	state.Files[action.FileName] = file

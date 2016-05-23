@@ -34,12 +34,11 @@ func TestScroll(t *testing.T) {
 	// Termheight is 5, logview height will be 3
 	state.Files["One"] = []string{"1", "2", "3", "4", "5"}
 	state.selected = 0
-	actions := make(chan Action, 100)
-	state = Scroll{Direction: up, NumLines: 3}.Apply(state, actions)
+	state = state.scroll(up, 3)
 	if state.getSelectedView().offSet != 3 {
 		t.Fail()
 	}
-	state = Scroll{Direction: down, NumLines: 2}.Apply(state, actions)
+	state = state.scroll(down, 2)
 	if state.getSelectedView().offSet != 1 {
 		t.Fail()
 	}
@@ -50,8 +49,7 @@ func TestScrollDownPastEnd(t *testing.T) {
 	// Termheight is 5, logview height will be 3
 	state.Files["One"] = []string{"1", "2", "3", "4", "5"}
 	state.selected = 0
-	actions := make(chan Action, 100)
-	state = Scroll{Direction: down, NumLines: 1}.Apply(state, actions)
+	state = state.scroll(down, 10)
 	if state.getSelectedView().offSet != 0 {
 		t.Fail()
 	}
@@ -62,8 +60,7 @@ func TestScrollUpTooHigh(t *testing.T) {
 	// Termheight is 5, logview height will be 3
 	state.Files["One"] = []string{"1", "2", "3", "4", "5"}
 	state.selected = 0
-	actions := make(chan Action, 100)
-	state = Scroll{Direction: up, NumLines: 30}.Apply(state, actions)
+	state = state.scroll(up, 30)
 	if state.getSelectedView().offSet != 4 {
 		t.Fail()
 	}
@@ -73,14 +70,7 @@ func TestScrollToBottom(t *testing.T) {
 	state := NewAppState([]string{"1"}, 1)
 	state.Files["1"] = []string{"1", "2", "3", "4", "5"}
 	state.LogViews[state.selected].offSet = 4
-	actions := make(chan Action, 100)
-	state = KeyPress{Key: "G"}.Apply(state, actions)
-	action := <-actions
-	scrollAction, ok := action.(Scroll)
-	if !ok || scrollAction.Direction != bottom {
-		t.Error("keypress didn't trigger scroll to bottom")
-	}
-	state = Scroll{Direction: bottom}.Apply(state, actions)
+	state = state.scroll(bottom, 0)
 	if state.getSelectedView().offSet != 0 {
 		t.Fail()
 	}
@@ -89,8 +79,7 @@ func TestScrollToBottom(t *testing.T) {
 func TestToggleWrapping(t *testing.T) {
 	state := NewAppState([]string{"One"}, 10)
 	orig := state.wrap
-	actions := make(chan Action, 100)
-	state = KeyPress{Key: "w"}.Apply(state, actions)
+	state = KeyPress{Key: "w"}.Apply(state)
 	if state.wrap != (!orig) {
 		t.Fail()
 	}

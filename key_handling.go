@@ -8,46 +8,46 @@ type KeyPress struct {
 }
 
 // Apply the KeyPress
-func (action KeyPress) Apply(state AppState, actions chan<- Action) AppState {
+func (action KeyPress) Apply(state AppState) AppState {
 	key := action.Key
 	switch state.CurrentMode {
 	case normal:
 		switch key {
 		case "<space>":
-			actions <- ChangeMode{Mode: selectCategory}
+			state = state.changeMode(selectCategory)
 		case "<tab>":
-			actions <- ChangeMode{Mode: filterMode}
+			state = state.changeMode(filterMode)
 			state.showFilters = true
 		case "?", "/", "<enter>":
-			actions <- ChangeMode{Mode: search}
+			state = state.changeMode(search)
 		case "w":
 			state.wrap = !state.wrap
 		case "<backspace>":
 			// Actually c-h
-			actions <- ChangeSelection{Direction: left}
+			state = state.changeSelection(left)
 		case "C-l":
-			actions <- ChangeSelection{Direction: right}
+			state = state.changeSelection(right)
 		case "<up>", "k":
-			actions <- Scroll{Direction: up, NumLines: 1}
+			state = state.scroll(up, 1)
 		case "<down>", "j":
-			actions <- Scroll{Direction: down, NumLines: 1}
+			state = state.scroll(down, 1)
 		case "b", "C-u":
-			actions <- Scroll{Direction: up, NumLines: state.termHeight / 2}
+			state = state.scroll(up, state.termHeight/2)
 		case "C-d":
-			actions <- Scroll{Direction: down, NumLines: state.termHeight / 2}
+			state = state.scroll(down, state.termHeight/2)
 		case "G":
-			actions <- Scroll{Direction: bottom}
+			state = state.scroll(bottom, 0)
 		case "n":
-			actions <- findNext{direction: up}
+			state = state.findNext(up)
 		case "N":
-			actions <- findNext{direction: down}
+			state = state.findNext(down)
 		case "f":
 			state.showFilters = !state.showFilters
 		case "!", "@", "#", "$", "%", "^", "&", "(", ")":
-			actions <- toggleFilter{filter: numFromSymbol(key)}
+			state = state.toggleFilter(numFromSymbol(key))
 		case "1", "2", "3", "4":
 			choice, _ := strconv.Atoi(key)
-			actions <- changeLayout{choice: choice}
+			state = state.changeLayout(choice)
 		default:
 			state.StatusBar.Text = key
 		}
@@ -56,15 +56,15 @@ func (action KeyPress) Apply(state AppState, actions chan<- Action) AppState {
 		case "<enter>":
 			bestMatch, ok := state.Categories.getBestMatch(state)
 			if ok {
-				actions <- SelectCategory{FileName: bestMatch}
+				state = state.selectCategory(bestMatch)
 			}
 			fallthrough
 		case "<escape>":
-			actions <- ChangeMode{Mode: normal}
+			state = state.changeMode(normal)
 			state.selectCategoryBuffer.text = ""
 
 		default:
-			actions <- typeKey{key: key}
+			state = state.typeKey(key)
 		}
 	case search:
 		switch key {
@@ -72,20 +72,20 @@ func (action KeyPress) Apply(state AppState, actions chan<- Action) AppState {
 			// quit search here...
 			fallthrough
 		case "<escape>":
-			actions <- ChangeMode{Mode: normal}
+			state = state.changeMode(normal)
 		default:
-			actions <- typeKey{key: convertKey(key)}
+			state = state.typeKey(key)
 		}
 	case filterMode:
 		switch key {
 		case "<tab>":
-			actions <- ChangeMode{Mode: normal}
+			state = state.changeMode(normal)
 		case "<enter>":
-			actions <- ChangeMode{Mode: editFilter}
+			state = state.changeMode(editFilter)
 		case "f":
 			state.showFilters = !state.showFilters
 		case "!", "@", "#", "$", "%", "^", "&", "(", ")":
-			actions <- toggleFilter{filter: numFromSymbol(key)}
+			state = state.toggleFilter(numFromSymbol(key))
 		case "j":
 			if state.selectedFilter < len(state.filters)-1 {
 				state.selectedFilter++
@@ -98,9 +98,9 @@ func (action KeyPress) Apply(state AppState, actions chan<- Action) AppState {
 	case editFilter:
 		switch key {
 		case "<enter>":
-			actions <- ChangeMode{Mode: filterMode}
+			state = state.changeMode(filterMode)
 		default:
-			actions <- typeKey{key: key}
+			state = state.typeKey(key)
 		}
 	default:
 		panic("Didn't handle keypress!")

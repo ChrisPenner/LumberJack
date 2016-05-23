@@ -10,14 +10,8 @@ const (
 	bottom
 )
 
-// ChangeSelection Action
-type ChangeSelection struct {
-	Direction direction
-}
-
-// Apply ChangeSelection
-func (action ChangeSelection) Apply(state AppState, actions chan<- Action) AppState {
-	switch action.Direction {
+func (state AppState) changeSelection(direction direction) AppState {
+	switch direction {
 	case left:
 		if state.selected > 0 {
 			state.selected--

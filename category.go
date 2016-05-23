@@ -29,15 +29,9 @@ func (c Categories) getBestMatch(state AppState) (string, bool) {
 	return "", false
 }
 
-// SelectCategory selects a category
-type SelectCategory struct {
-	FileName string
-}
-
-// Apply SelectCategory
-func (action SelectCategory) Apply(state AppState, actions chan<- Action) AppState {
+func (state AppState) selectCategory(fileName string) AppState {
 	selectedView := state.LogViews[state.selected]
-	selectedView.FileName = action.FileName
+	selectedView.FileName = fileName
 	state.LogViews[state.selected] = selectedView
 	return state
 }

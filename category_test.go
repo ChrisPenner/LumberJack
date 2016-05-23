@@ -5,13 +5,10 @@ import "testing"
 func TestEnterSelectsCategory(t *testing.T) {
 	fileNames := []string{"One", "Two", "Three"}
 	state := NewAppState(fileNames, 10)
-	actions := make(chan Action, 100)
 	state.CurrentMode = selectCategory
-	state.selectCategoryBuffer.text = "On"
-	newState := KeyPress{Key: "<enter>"}.Apply(state, actions)
-	action := <-actions
-	selectCategory, ok := action.(SelectCategory)
-	if !ok || selectCategory.FileName != "One" || newState.LogViews[0].FileName != "One" {
+	state.selectCategoryBuffer.text = "Thr"
+	state = KeyPress{Key: "<enter>"}.Apply(state)
+	if state.getSelectedView().FileName != "Three" {
 		t.Fail()
 	}
 }

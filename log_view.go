@@ -130,18 +130,11 @@ func (file File) highlightMatches(term string) File {
 	return highlightedLines
 }
 
-// Scroll Action
-type Scroll struct {
-	Direction direction
-	NumLines  int
-}
-
-// Apply Scroll
-func (action Scroll) Apply(state AppState, actions chan<- Action) AppState {
-	amount := action.NumLines
+// Scroll
+func (state AppState) scroll(direction direction, amount int) AppState {
 	view := state.getSelectedView()
 	file := state.getSelectedFile()
-	switch action.Direction {
+	switch direction {
 	case up:
 		view.offSet += amount
 	case down:

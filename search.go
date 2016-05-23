@@ -1,11 +1,7 @@
 package main
 
-type findNext struct {
-	direction direction
-}
-
-func (action findNext) Apply(state AppState, actions chan<- Action) AppState {
-	switch action.direction {
+func (state AppState) findNext(direction direction) AppState {
+	switch direction {
 	case up:
 		state.searchIndex++
 	case down:

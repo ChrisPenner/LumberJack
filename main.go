@@ -14,7 +14,7 @@ type resize struct {
 	Height int
 }
 
-func (action resize) Apply(state AppState, actions chan<- Action) AppState {
+func (action resize) Apply(state AppState) AppState {
 	state.termHeight = action.Height
 	return state
 }

@@ -10,15 +10,9 @@ const (
 	editFilter
 )
 
-// ChangeMode changes modes
-type ChangeMode struct {
-	Mode mode
-}
-
-// Apply the ChangeMode
-func (action ChangeMode) Apply(state AppState, actions chan<- Action) AppState {
-	state.CurrentMode = action.Mode
-	switch action.Mode {
+func (state AppState) changeMode(mode mode) AppState {
+	state.CurrentMode = mode
+	switch mode {
 	case search:
 		sb := state.searchBuffer
 		sb.text = ""
