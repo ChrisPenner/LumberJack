@@ -80,6 +80,8 @@ func (action KeyPress) Apply(state AppState) AppState {
 			state = state.changeMode(normal)
 		case "<enter>":
 			state = state.changeMode(editFilter)
+		case "<space>":
+			state.filters[state.selectedFilter].active = !state.filters[state.selectedFilter].active
 		case "<backspace>":
 			state.selected = state.layout - 1
 			state = state.changeMode(normal)
