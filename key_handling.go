@@ -102,7 +102,7 @@ func (action KeyPress) Apply(state AppState) AppState {
 		}
 	case editFilter:
 		switch key {
-		case "<enter>":
+		case "<enter>", "<escape>":
 			state = state.changeMode(filterMode)
 		default:
 			state = state.typeKey(key)
