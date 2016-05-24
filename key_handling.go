@@ -79,6 +79,9 @@ func (action KeyPress) Apply(state AppState) AppState {
 			state.showFilters = false
 			state = state.changeMode(normal)
 		case "<enter>":
+			if state.selectedFilter == len(state.filters) {
+				state.filters = append(state.filters, filter{active: true})
+			}
 			state = state.changeMode(editFilter)
 		case "<space>":
 			state.filters[state.selectedFilter].active = !state.filters[state.selectedFilter].active
@@ -88,7 +91,8 @@ func (action KeyPress) Apply(state AppState) AppState {
 		case "!", "@", "#", "$", "%", "^", "&", "(", ")":
 			state = state.toggleFilter(numFromSymbol(key))
 		case "j":
-			if state.selectedFilter < len(state.filters)-1 {
+			// Allow going one past the end
+			if state.selectedFilter < len(state.filters) {
 				state.selectedFilter++
 			}
 		case "k":

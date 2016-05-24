@@ -38,6 +38,13 @@ func (f filters) display(state AppState) *ui.Row {
 		}
 		listItems = append(listItems, title)
 	}
+	// Add last item
+	if state.selectedFilter == len(state.filters) {
+		listItems = append(listItems, "[ + Add Filter](fg-black,bg-green)")
+	} else {
+		listItems = append(listItems, "[ + Add Filter](fg-yellow)")
+	}
+
 	filterList := ui.NewList()
 	filterList.Overflow = "wrap"
 	filterList.Items = listItems
