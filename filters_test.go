@@ -97,3 +97,12 @@ func TestAddingNewFilter(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestTabFocusesFilterMode(t *testing.T) {
+	state := NewAppState([]string{"one"}, 10, 10)
+	state.CurrentMode = normal
+	state = KeyPress{Key: "<tab>"}.Apply(state)
+	if state.CurrentMode != filterMode {
+		t.Fail()
+	}
+}

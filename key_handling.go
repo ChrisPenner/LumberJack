@@ -16,6 +16,9 @@ func (action KeyPress) Apply(state AppState) AppState {
 		case "<enter>":
 			state = state.changeMode(selectCategory)
 		case "<tab>":
+			if !state.showFilters {
+				state.CurrentMode = filterMode
+			}
 			state.showFilters = !state.showFilters
 		case "?", "/":
 			state = state.changeMode(search)
