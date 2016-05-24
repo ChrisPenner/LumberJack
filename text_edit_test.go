@@ -3,14 +3,14 @@ package main
 import "testing"
 
 func TestBackSpace(t *testing.T) {
-	tb := textBuffer{text: "text"}
+	tb := buffer{"text"}
 	tb = tb.typeKey("C-8")
 	if tb.text != "tex" {
 		t.Fail()
 	}
 }
 func TestBackSpaceOnEmptyString(t *testing.T) {
-	tb := textBuffer{text: ""}
+	tb := buffer{""}
 	tb = tb.typeKey("<BS>")
 	if tb.text != "" {
 		t.Fail()
@@ -18,7 +18,7 @@ func TestBackSpaceOnEmptyString(t *testing.T) {
 }
 
 func TestTypeKey(t *testing.T) {
-	tb := textBuffer{text: ""}
+	tb := buffer{""}
 	tb = tb.typeKey("a")
 	if tb.text != "a" {
 		t.Fail()

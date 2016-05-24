@@ -9,19 +9,18 @@ func (state AppState) typeKey(key string) AppState {
 		view := state.getSelectedView()
 		state.LogViews[state.selected] = view.scrollToSearch(state)
 	case editFilter:
-		newText := state.filters[state.selectedFilter].textBuffer.typeKey(key)
-		state.filters[state.selectedFilter].textBuffer = newText
+		newText := state.filters[state.selectedFilter].buffer.typeKey(key)
+		state.filters[state.selectedFilter].buffer = newText
 	}
 	return state
 }
 
-// textBuffer provides an abstraction over editing text
-type textBuffer struct {
-	cursor int
-	text   string
+// buffer provides an abstraction over editing text
+type buffer struct {
+	text string
 }
 
-func (t textBuffer) typeKey(key string) textBuffer {
+func (t buffer) typeKey(key string) buffer {
 	key = convertKey(key)
 	switch key {
 	case "<BS>":

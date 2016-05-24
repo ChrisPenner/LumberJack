@@ -9,8 +9,8 @@ import (
 
 type filters []filter
 type filter struct {
-	active     bool
-	textBuffer textBuffer
+	buffer
+	active bool
 }
 
 func getFilterSpan(termWidth int) int {
@@ -29,9 +29,9 @@ func (f filters) display(state AppState) *ui.Row {
 			attrs = "fg-red"
 		}
 		if i == state.selectedFilter && (state.CurrentMode == filterMode || state.CurrentMode == editFilter) {
-			title = fmt.Sprintf("[[%d]](bg-cyan,fg-black) [%s](%s)", i+1, f.textBuffer.text, attrs)
+			title = fmt.Sprintf("[[%d]](bg-cyan,fg-black) [%s](%s)", i+1, f.text, attrs)
 		} else {
-			title = fmt.Sprintf("[[%d] %s](%s)", i+1, f.textBuffer.text, attrs)
+			title = fmt.Sprintf("[[%d] %s](%s)", i+1, f.text, attrs)
 		}
 		if state.CurrentMode == editFilter && i == state.selectedFilter {
 			title += "_"
@@ -71,7 +71,7 @@ func (f File) filter(filters []filter, height int, offSet int) File {
 			if !filter.active {
 				continue
 			}
-			matched, err := regexp.Match(filter.textBuffer.text, []byte(line))
+			matched, err := regexp.Match(filter.text, []byte(line))
 			if err != nil {
 				continue
 			}

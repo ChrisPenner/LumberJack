@@ -14,8 +14,8 @@ type AppState struct {
 	HandleKeypress       func(string)
 	selected             int
 	searchIndex          int
-	selectCategoryBuffer textBuffer
-	searchBuffer         textBuffer
+	selectCategoryBuffer buffer
+	searchBuffer         buffer
 	wrap                 bool
 	filters              filters
 	showFilters          bool
@@ -51,8 +51,8 @@ func NewAppState(fileNames []string, height int, width int) AppState {
 	state.Categories = fileNames
 
 	state.filters = filters{
-		filter{textBuffer: textBuffer{text: "INFO"}},
-		filter{textBuffer: textBuffer{text: "WARNING"}},
+		filter{buffer: buffer{"INFO"}},
+		filter{buffer: buffer{"WARNING"}},
 	}
 
 	state.layout = 1

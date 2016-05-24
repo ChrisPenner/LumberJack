@@ -4,8 +4,8 @@ import "testing"
 
 func TestFiltering(t *testing.T) {
 	file := File{"one", "twox", "three", "xfour", "fivex"}
-	filters := []filter{
-		filter{textBuffer: textBuffer{text: "x"}, active: true},
+	filters := filters{
+		filter{buffer: buffer{"x"}, active: true},
 	}
 	filtered := file.filter(filters, 2, 1)
 	expected := File{"twox", "xfour", "fivex"}
