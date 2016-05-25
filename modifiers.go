@@ -17,9 +17,10 @@ const (
 type modifiers []modifier
 type modifier struct {
 	buffer
-	active bool
-	kind   modifierType
-	color  string
+	active  bool
+	kind    modifierType
+	fgColor string
+	bgColor string
 }
 
 func getModifierSpan(termWidth int) int {
@@ -46,9 +47,9 @@ func (state AppState) getModifiers() []string {
 			addHeader = false
 		}
 		if f.active {
-			attrs = fmt.Sprintf("fg-black,bg-%s", f.color)
+			attrs = fmt.Sprintf("fg-%s,bg-%s", f.fgColor, f.bgColor)
 		} else {
-			attrs = fmt.Sprintf("fg-%s", f.color)
+			attrs = fmt.Sprintf("fg-%s,bg-%s", f.bgColor, f.fgColor)
 		}
 		if i == state.selectedMod {
 			title = fmt.Sprintf("[[%d]](fg-black) [%s](%s,)", i+1, f.text, attrs)
@@ -89,17 +90,40 @@ func (mods modifiers) display(state AppState) *ui.Row {
 	return ui.NewCol(modSpan, 0, modList)
 }
 
+func (f File) highlight(highlighters modifiers) File {
+	var highlightedLines File
+	for _, line := range f {
+		for _, hl := range highlighters {
+			if !hl.active || hl.kind != highlighter || hl.text == "" {
+				continue
+			}
+			re, err := regexp.Compile(hl.text)
+			if err != nil {
+				continue
+			}
+
+			highlightString := func(s string) string {
+				return fmt.Sprintf("[%s](fg-%s,bg-%s)", s, hl.fgColor, hl.bgColor)
+			}
+
+			line = re.ReplaceAllStringFunc(line, highlightString)
+		}
+		highlightedLines = append(highlightedLines, line)
+	}
+	return highlightedLines
+}
+
 func (f File) filter(filters modifiers, height int, offSet int) File {
 	var filteredLines File
 	for i := range f {
 		// Go through file in reverse
 		line := f[len(f)-i-1]
 		matchFilter := false
-		for _, filter := range filters {
-			if !filter.active {
+		for _, filt := range filters {
+			if !filt.active || (filt.kind != filter) {
 				continue
 			}
-			matched, err := regexp.Match(filter.text, []byte(line))
+			matched, err := regexp.Match(filt.text, []byte(line))
 			if err != nil {
 				continue
 			}

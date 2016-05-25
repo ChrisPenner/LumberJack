@@ -52,13 +52,13 @@ func NewAppState(fileNames []string, height int, width int) AppState {
 
 	state.modifiers = modifiers{
 		// highlighters
-		modifier{buffer: buffer{"INFO"}, kind: highlighter, color: "yellow", active: true},
-		modifier{buffer: buffer{"WARNING"}, kind: highlighter, color: "green", active: true},
-		modifier{buffer: buffer{"500"}, kind: highlighter, color: "magenta", active: true},
-		modifier{buffer: buffer{"^ "}, kind: highlighter, color: "blue"},
-		modifier{buffer: buffer{".*"}, kind: highlighter, color: "cyan"},
-		modifier{buffer: buffer{"WARNING"}, kind: filter, color: "white"},
-		modifier{buffer: buffer{"^ "}, kind: filter, color: "white"},
+		modifier{buffer: buffer{"INFO"}, kind: highlighter, bgColor: "green", fgColor: "black", active: true},
+		modifier{buffer: buffer{"WARNING"}, kind: highlighter, bgColor: "yellow", fgColor: "black", active: true},
+		modifier{buffer: buffer{"500"}, kind: highlighter, bgColor: "magenta", fgColor: "black", active: true},
+		modifier{buffer: buffer{"^ +"}, kind: highlighter, bgColor: "blue", fgColor: "black"},
+		modifier{buffer: buffer{""}, kind: highlighter, bgColor: "cyan", fgColor: "black"},
+		modifier{buffer: buffer{"WARNING"}, kind: filter, bgColor: "white", fgColor: "black"},
+		modifier{buffer: buffer{"^ "}, kind: filter, bgColor: "white", fgColor: "black"},
 	}
 
 	state.layout = 1

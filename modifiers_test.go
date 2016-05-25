@@ -5,7 +5,7 @@ import "testing"
 func TestFiltering(t *testing.T) {
 	file := File{"one", "twox", "three", "xfour", "fivex"}
 	modifiers := modifiers{
-		modifier{buffer: buffer{"x"}, active: true},
+		modifier{buffer: buffer{"x"}, active: true, kind: filter},
 	}
 	filtered := file.filter(modifiers, 2, 1)
 	expected := File{"twox", "xfour", "fivex"}
@@ -104,5 +104,26 @@ func TestTabFocusesFilterMode(t *testing.T) {
 	state = KeyPress{Key: "<tab>"}.Apply(state)
 	if state.CurrentMode != modifierMode {
 		t.Fail()
+	}
+}
+
+func TestHighlightsLines(t *testing.T) {
+	view := File{"line one", "love two", "three"}
+	highlighters := modifiers{
+		modifier{
+			kind:    highlighter,
+			active:  true,
+			fgColor: "green",
+			bgColor: "white",
+			buffer:  buffer{"l\\w*e"},
+		},
+	}
+	view = view.highlight(highlighters)
+	goodLength := len(view) == 3
+	lineOne := "[line](fg-green,bg-white) one" == view[0]
+	lineTwo := "[love](fg-green,bg-white) two" == view[1]
+	lineThree := "three" == view[2]
+	if !goodLength || !lineOne || !lineTwo || !lineThree {
+		t.Error(view)
 	}
 }

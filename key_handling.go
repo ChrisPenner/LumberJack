@@ -43,7 +43,7 @@ func (action KeyPress) Apply(state AppState) AppState {
 			state = state.findNext(up)
 		case "N":
 			state = state.findNext(down)
-		case "!", "@", "#", "$", "%", "^", "&", "(", ")":
+		case "!", "@", "#", "$", "%", "^", "&", "*", "(", ")":
 			state = state.toggleModifier(numFromSymbol(key))
 		case "1", "2", "3", "4":
 			choice, _ := strconv.Atoi(key)
@@ -83,7 +83,7 @@ func (action KeyPress) Apply(state AppState) AppState {
 			state = state.changeMode(normal)
 		case "<enter>":
 			if state.selectedMod == len(state.modifiers) {
-				state.modifiers = append(state.modifiers, modifier{active: true, kind: filter, color: "white"})
+				state.modifiers = append(state.modifiers, modifier{active: true, kind: filter, fgColor: "black", bgColor: "white"})
 			}
 			state = state.changeMode(editModifier)
 		case "<space>":
@@ -91,7 +91,7 @@ func (action KeyPress) Apply(state AppState) AppState {
 		case "<backspace>":
 			state.selected = state.layout - 1
 			state = state.changeMode(normal)
-		case "!", "@", "#", "$", "%", "^", "&", "(", ")":
+		case "!", "@", "#", "$", "%", "^", "&", "*", "(", ")":
 			state = state.toggleModifier(numFromSymbol(key))
 		case "j":
 			// Allow going one past the end in each list

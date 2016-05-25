@@ -67,8 +67,11 @@ func (view LogView) display(state AppState) *ui.List {
 	file := state.getFile(view.FileName)
 	height := view.numVisibleLines(state)
 	filteredView := file
-	if anyActiveModifiers(state.modifiers) {
+	if anyActiveModifiers(state.modifiers, filter) {
 		filteredView = file.filter(state.modifiers, height, view.offSet)
+	}
+	if anyActiveModifiers(state.modifiers, highlighter) {
+		filteredView = filteredView.highlight(state.modifiers)
 	}
 	searchTerm := state.searchBuffer.text
 	filteredView = filteredView.highlightMatches(searchTerm)
@@ -153,9 +156,9 @@ func (state AppState) scroll(direction direction, amount int) AppState {
 	return state
 }
 
-func anyActiveModifiers(modifiers modifiers) bool {
+func anyActiveModifiers(modifiers modifiers, kind modifierType) bool {
 	for _, m := range modifiers {
-		if m.active {
+		if m.active && m.kind == kind {
 			return true
 		}
 	}
