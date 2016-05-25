@@ -127,3 +127,17 @@ func TestHighlightsLines(t *testing.T) {
 		t.Error(view)
 	}
 }
+
+// Benchmarks
+
+func BenchmarkDisplayModifiers(b *testing.B) {
+	state := NewAppState([]string{"1", "2"}, 10, 10)
+	state.Files["1"] = sampleFile
+	state.Files["2"] = sampleFile
+	state.modifiers = modifiers{
+		modifier{buffer: buffer{"\\d"}, active: true, kind: filter},
+	}
+	for i := 0; i < b.N; i++ {
+		state.modifiers.display(state)
+	}
+}

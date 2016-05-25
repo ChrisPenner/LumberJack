@@ -2,6 +2,11 @@ package main
 
 import "testing"
 
+var sampleFile = []string{
+	"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
+	"17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31",
+}
+
 func TestGetFileSliceInRange(t *testing.T) {
 	file := File{"1", "2", "3", "4", "5", "6"}
 	view := LogView{offSet: 2}
@@ -82,5 +87,25 @@ func TestToggleWrapping(t *testing.T) {
 	state = KeyPress{Key: "w"}.Apply(state)
 	if state.wrap != (!orig) {
 		t.Fail()
+	}
+}
+
+// Benchmarks
+
+func BenchmarkDisplayLogViews(b *testing.B) {
+	state := NewAppState([]string{"1", "2"}, 10, 10)
+	state.Files["1"] = sampleFile
+	state.Files["2"] = sampleFile
+	for i := 0; i < b.N; i++ {
+		state.LogViews.display(state)
+	}
+}
+
+func BenchmarkDisplayLogView(b *testing.B) {
+	state := NewAppState([]string{"1", "2"}, 10, 10)
+	state.Files["1"] = sampleFile
+	state.Files["2"] = sampleFile
+	for i := 0; i < b.N; i++ {
+		state.LogViews[0].display(state)
 	}
 }
