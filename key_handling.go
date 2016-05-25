@@ -16,10 +16,10 @@ func (action KeyPress) Apply(state AppState) AppState {
 		case "<enter>":
 			state = state.changeMode(selectCategory)
 		case "<tab>":
-			if !state.showFilters {
+			if !state.showMods {
 				state.CurrentMode = filterMode
 			}
-			state.showFilters = !state.showFilters
+			state.showMods = !state.showMods
 		case "?", "/":
 			state = state.changeMode(search)
 		case "w":
@@ -44,7 +44,7 @@ func (action KeyPress) Apply(state AppState) AppState {
 		case "N":
 			state = state.findNext(down)
 		case "!", "@", "#", "$", "%", "^", "&", "(", ")":
-			state = state.toggleFilter(numFromSymbol(key))
+			state = state.toggleModifier(numFromSymbol(key))
 		case "1", "2", "3", "4":
 			choice, _ := strconv.Atoi(key)
 			state = state.changeLayout(choice)
@@ -79,28 +79,28 @@ func (action KeyPress) Apply(state AppState) AppState {
 	case filterMode:
 		switch key {
 		case "<tab>":
-			state.showFilters = false
+			state.showMods = false
 			state = state.changeMode(normal)
 		case "<enter>":
-			if state.selectedFilter == len(state.filters) {
-				state.filters = append(state.filters, filter{active: true})
+			if state.selectedMod == len(state.modifiers) {
+				state.modifiers = append(state.modifiers, modifier{active: true, kind: filter, color: "white"})
 			}
 			state = state.changeMode(editFilter)
 		case "<space>":
-			state.filters[state.selectedFilter].active = !state.filters[state.selectedFilter].active
+			state = state.toggleModifier(state.selectedMod)
 		case "<backspace>":
 			state.selected = state.layout - 1
 			state = state.changeMode(normal)
 		case "!", "@", "#", "$", "%", "^", "&", "(", ")":
-			state = state.toggleFilter(numFromSymbol(key))
+			state = state.toggleModifier(numFromSymbol(key))
 		case "j":
-			// Allow going one past the end
-			if state.selectedFilter < len(state.filters) {
-				state.selectedFilter++
+			// Allow going one past the end in each list
+			if state.selectedMod < len(state.modifiers) {
+				state.selectedMod++
 			}
 		case "k":
-			if state.selectedFilter > 0 {
-				state.selectedFilter--
+			if state.selectedMod > 0 {
+				state.selectedMod--
 			}
 		}
 	case editFilter:

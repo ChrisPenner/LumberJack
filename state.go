@@ -17,10 +17,10 @@ type AppState struct {
 	selectCategoryBuffer buffer
 	searchBuffer         buffer
 	wrap                 bool
-	filters              filters
-	showFilters          bool
 	layout               int
-	selectedFilter       int
+	modifiers            modifiers
+	showMods             bool
+	selectedMod          int
 }
 
 // NewAppState constructs and appstate
@@ -50,9 +50,15 @@ func NewAppState(fileNames []string, height int, width int) AppState {
 
 	state.Categories = fileNames
 
-	state.filters = filters{
-		filter{buffer: buffer{"INFO"}},
-		filter{buffer: buffer{"WARNING"}},
+	state.modifiers = modifiers{
+		// highlighters
+		modifier{buffer: buffer{"INFO"}, kind: highlighter, color: "yellow", active: true},
+		modifier{buffer: buffer{"WARNING"}, kind: highlighter, color: "green", active: true},
+		modifier{buffer: buffer{"500"}, kind: highlighter, color: "magenta", active: true},
+		modifier{buffer: buffer{"^ "}, kind: highlighter, color: "blue"},
+		modifier{buffer: buffer{".*"}, kind: highlighter, color: "cyan"},
+		modifier{buffer: buffer{"WARNING"}, kind: filter, color: "white"},
+		modifier{buffer: buffer{"^ "}, kind: filter, color: "white"},
 	}
 
 	state.layout = 1

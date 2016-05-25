@@ -35,7 +35,7 @@ func TestSelectingFilterMode(t *testing.T) {
 	state := NewAppState([]string{"1", "2"}, 10, 10)
 	state.layout = 2
 	state.selected = 1
-	state.showFilters = true
+	state.showMods = true
 
 	state = state.changeSelection(right)
 
@@ -48,7 +48,7 @@ func TestSelectingFilterNotVisible(t *testing.T) {
 	state := NewAppState([]string{"1", "2"}, 10, 10)
 	state.layout = 2
 	state.selected = 1
-	state.showFilters = false
+	state.showMods = false
 
 	state = state.changeSelection(right)
 

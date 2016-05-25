@@ -4,70 +4,70 @@ import "testing"
 
 func TestFiltering(t *testing.T) {
 	file := File{"one", "twox", "three", "xfour", "fivex"}
-	filters := filters{
-		filter{buffer: buffer{"x"}, active: true},
+	modifiers := modifiers{
+		modifier{buffer: buffer{"x"}, active: true},
 	}
-	filtered := file.filter(filters, 2, 1)
+	filtered := file.filter(modifiers, 2, 1)
 	expected := File{"twox", "xfour", "fivex"}
 	if len(filtered) != 3 || filtered[0] != expected[0] || filtered[1] != expected[1] || filtered[2] != expected[2] {
 		t.Error(filtered)
 	}
 }
 
-func TestSelectingFilters(t *testing.T) {
+func TestSelectingmodifiers(t *testing.T) {
 	state := NewAppState([]string{"one"}, 10, 10)
-	state.filters = filters{
-		filter{},
-		filter{},
+	state.modifiers = modifiers{
+		modifier{},
+		modifier{},
 	}
 	state.CurrentMode = filterMode
 	state = KeyPress{Key: "j"}.Apply(state)
-	if state.selectedFilter != 1 {
+	if state.selectedMod != 1 {
 		t.Fail()
 	}
 	state = KeyPress{Key: "k"}.Apply(state)
-	if state.selectedFilter != 0 {
+	if state.selectedMod != 0 {
 		t.Fail()
 	}
 }
 
-func TestSelectingFiltersTooFar(t *testing.T) {
+func TestSelectingmodifiersTooFar(t *testing.T) {
 	state := NewAppState([]string{"one"}, 10, 10)
-	state.filters = filters{
-		filter{},
+	state.modifiers = modifiers{
+		modifier{},
 	}
 	state.CurrentMode = filterMode
 	state = KeyPress{Key: "k"}.Apply(state)
-	if state.selectedFilter != 0 {
+	if state.selectedMod != 0 {
 		t.Fail()
 	}
 }
 
-func TestSelectingEmptyFilter(t *testing.T) {
+func TestSelectingEmptyMod(t *testing.T) {
 	state := NewAppState([]string{"one"}, 10, 10)
-	state.filters = filters{
-		filter{},
+	state.modifiers = modifiers{
+		modifier{},
 	}
 	state.CurrentMode = filterMode
 	state = KeyPress{Key: "j"}.Apply(state)
-	if state.selectedFilter != 1 {
+	if state.selectedMod != 1 {
 		t.Fail()
 	}
 }
 
-func TestToggleFilter(t *testing.T) {
+func TestToggleMod(t *testing.T) {
 	state := NewAppState([]string{"one"}, 10, 10)
-	state.filters = filters{
-		filter{active: true},
+	state.modifiers = modifiers{
+		modifier{active: true},
 	}
 
-	state = state.toggleFilter(0)
-	if state.filters[0].active != false {
+	state = state.toggleModifier(0)
+	if state.modifiers[0].active != false {
 		t.Fail()
 	}
 
-	state = state.toggleFilter(0)
-	if state.filters[0].active != true {
+	state = state.toggleModifier(0)
+	if state.modifiers[0].active != true {
 		t.Fail()
 	}
 }
@@ -87,13 +87,13 @@ func TestSelectingBackToNormalMode(t *testing.T) {
 
 func TestAddingNewFilter(t *testing.T) {
 	state := NewAppState([]string{"one"}, 10, 10)
-	state.filters = filters{
-		filter{},
+	state.modifiers = modifiers{
+		modifier{},
 	}
-	state.selectedFilter = 1
+	state.selectedMod = 1
 	state.CurrentMode = filterMode
 	state = KeyPress{Key: "<enter>"}.Apply(state)
-	if len(state.filters) != 2 {
+	if len(state.modifiers) != 2 {
 		t.Fail()
 	}
 }

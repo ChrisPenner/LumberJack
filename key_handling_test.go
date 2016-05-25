@@ -28,16 +28,16 @@ func TestChangingLayout(t *testing.T) {
 	}
 }
 
-func TestSpaceTogglesFilter(t *testing.T) {
+func TestSpaceTogglesmodifier(t *testing.T) {
 	state := NewAppState([]string{"1"}, 10, 10)
 	state.CurrentMode = filterMode
-	state.filters = filters{
-		filter{active: false},
+	state.modifiers = modifiers{
+		modifier{active: false},
 	}
-	state.selectedFilter = 0
+	state.selectedMod = 0
 
 	state = KeyPress{Key: "<space>"}.Apply(state)
-	if state.filters[state.selectedFilter].active != true {
+	if state.modifiers[state.selectedMod].active != true {
 		t.Fail()
 	}
 }

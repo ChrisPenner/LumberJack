@@ -24,8 +24,8 @@ func (action resize) Apply(state AppState) AppState {
 // Render the application as a function of state
 func Render(state AppState) {
 	mainColumns := state.LogViews.display(state)
-	if state.showFilters {
-		filterColumn := state.filters.display(state)
+	if state.showMods {
+		filterColumn := state.modifiers.display(state)
 		mainColumns = append(mainColumns, filterColumn)
 	}
 	mainRow := ui.NewRow(mainColumns...)

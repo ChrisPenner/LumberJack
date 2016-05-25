@@ -38,7 +38,7 @@ func (logViews LogViews) display(state AppState) []*ui.Row {
 	logViewColumns := []*ui.Row{}
 
 	filterSize := 0
-	if state.showFilters {
+	if state.showMods {
 		filterSize = getFilterSpan(state.termWidth)
 	}
 	numColumnsEach := (12 - filterSize) / state.layout
@@ -67,8 +67,8 @@ func (view LogView) display(state AppState) *ui.List {
 	file := state.getFile(view.FileName)
 	height := view.numVisibleLines(state)
 	filteredView := file
-	if anyActiveFilters(state.filters) {
-		filteredView = file.filter(state.filters, height, view.offSet)
+	if anyActiveModifiers(state.modifiers) {
+		filteredView = file.filter(state.modifiers, height, view.offSet)
 	}
 	searchTerm := state.searchBuffer.text
 	filteredView = filteredView.highlightMatches(searchTerm)
@@ -153,9 +153,9 @@ func (state AppState) scroll(direction direction, amount int) AppState {
 	return state
 }
 
-func anyActiveFilters(filters filters) bool {
-	for _, f := range filters {
-		if f.active {
+func anyActiveModifiers(modifiers modifiers) bool {
+	for _, m := range modifiers {
+		if m.active {
 			return true
 		}
 	}
