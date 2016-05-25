@@ -17,7 +17,7 @@ func (action KeyPress) Apply(state AppState) AppState {
 			state = state.changeMode(selectCategory)
 		case "<tab>":
 			if !state.showMods {
-				state.CurrentMode = filterMode
+				state.CurrentMode = modifierMode
 			}
 			state.showMods = !state.showMods
 		case "?", "/":
@@ -76,7 +76,7 @@ func (action KeyPress) Apply(state AppState) AppState {
 		default:
 			state = state.typeKey(key)
 		}
-	case filterMode:
+	case modifierMode:
 		switch key {
 		case "<tab>":
 			state.showMods = false
@@ -85,7 +85,7 @@ func (action KeyPress) Apply(state AppState) AppState {
 			if state.selectedMod == len(state.modifiers) {
 				state.modifiers = append(state.modifiers, modifier{active: true, kind: filter, color: "white"})
 			}
-			state = state.changeMode(editFilter)
+			state = state.changeMode(editModifier)
 		case "<space>":
 			state = state.toggleModifier(state.selectedMod)
 		case "<backspace>":
@@ -103,10 +103,10 @@ func (action KeyPress) Apply(state AppState) AppState {
 				state.selectedMod--
 			}
 		}
-	case editFilter:
+	case editModifier:
 		switch key {
 		case "<enter>", "<escape>":
-			state = state.changeMode(filterMode)
+			state = state.changeMode(modifierMode)
 		default:
 			state = state.typeKey(key)
 		}

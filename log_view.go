@@ -39,7 +39,7 @@ func (logViews LogViews) display(state AppState) []*ui.Row {
 
 	filterSize := 0
 	if state.showMods {
-		filterSize = getFilterSpan(state.termWidth)
+		filterSize = getModifierSpan(state.termWidth)
 	}
 	numColumnsEach := (12 - filterSize) / state.layout
 	leftOver := (12 - filterSize) - (numColumnsEach * state.layout)

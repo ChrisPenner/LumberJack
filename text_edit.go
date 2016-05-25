@@ -8,7 +8,7 @@ func (state AppState) typeKey(key string) AppState {
 		state.searchBuffer = state.searchBuffer.typeKey(key)
 		view := state.getSelectedView()
 		state.LogViews[state.selected] = view.scrollToSearch(state)
-	case editFilter:
+	case editModifier:
 		newBuffer := state.modifiers[state.selectedMod].typeKey(key)
 		state.modifiers[state.selectedMod].buffer = newBuffer
 	}

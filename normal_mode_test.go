@@ -39,7 +39,7 @@ func TestSelectingFilterMode(t *testing.T) {
 
 	state = state.changeSelection(right)
 
-	if state.selected != 1 || state.CurrentMode != filterMode {
+	if state.selected != 1 || state.CurrentMode != modifierMode {
 		t.Error(state.CurrentMode)
 	}
 }

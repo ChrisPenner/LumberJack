@@ -6,8 +6,8 @@ const (
 	normal mode = iota
 	selectCategory
 	search
-	filterMode
-	editFilter
+	modifierMode
+	editModifier
 )
 
 func (state AppState) changeMode(mode mode) AppState {

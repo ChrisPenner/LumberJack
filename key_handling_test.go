@@ -30,7 +30,7 @@ func TestChangingLayout(t *testing.T) {
 
 func TestSpaceTogglesmodifier(t *testing.T) {
 	state := NewAppState([]string{"1"}, 10, 10)
-	state.CurrentMode = filterMode
+	state.CurrentMode = modifierMode
 	state.modifiers = modifiers{
 		modifier{active: false},
 	}

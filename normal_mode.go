@@ -20,7 +20,7 @@ func (state AppState) changeSelection(direction direction) AppState {
 		if state.selected < state.layout-1 {
 			state.selected++
 		} else if state.showMods {
-			state = state.changeMode(filterMode)
+			state = state.changeMode(modifierMode)
 		}
 	}
 	return state
