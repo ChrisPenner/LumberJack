@@ -4,8 +4,8 @@ import "regexp"
 import ui "github.com/gizak/termui"
 
 func renderSelectCategoryModal(state AppState) {
-	height := ui.TermHeight()
-	width := ui.TermWidth()
+	height := state.termHeight
+	width := state.termWidth
 	text := state.selectCategoryBuffer.text
 
 	par := ui.NewPar("Select a File: " + text + "_")
