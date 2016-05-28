@@ -64,15 +64,9 @@ func (view LogView) display(state AppState) *ui.List {
 		list.BorderFg = ui.ColorYellow
 	}
 	list.BorderLabel = view.FileName
-	file := state.getFile(view.FileName)
+	file := state.Files[view.FileName]
 	height := view.numVisibleLines(state)
-	filteredView := file.lines
-	if anyActiveModifiers(state.modifiers, filter) {
-		filteredView = filteredView.filter(state.modifiers, height, view.offSet)
-	}
-	if anyActiveModifiers(state.modifiers, highlighter) {
-		filteredView = filteredView.highlight(state.modifiers)
-	}
+	filteredView := file.hlAndFiltered(state)
 	searchTerm := state.searchBuffer.text
 	filteredView = filteredView.highlightMatches(searchTerm)
 	visibleLines := filteredView.getVisibleSlice(view, height)

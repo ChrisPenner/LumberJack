@@ -90,10 +90,13 @@ func (mods modifiers) display(state AppState) *ui.Row {
 	return ui.NewCol(modSpan, 0, modList)
 }
 
-func (l lines) highlight(highlighters modifiers) lines {
+func (l lines) highlight(state AppState) lines {
+	if !anyActiveModifiers(state.modifiers, highlighter) {
+		return l
+	}
 	var highlightedLines lines
 	for _, line := range l {
-		for _, hl := range highlighters {
+		for _, hl := range state.modifiers {
 			if !hl.active || hl.kind != highlighter || hl.text == "" {
 				continue
 			}
@@ -113,17 +116,19 @@ func (l lines) highlight(highlighters modifiers) lines {
 	return highlightedLines
 }
 
-func (l lines) filter(filters modifiers, height int, offSet int) lines {
-	var filteredLines lines
+func (l lines) filter(state AppState) lines {
+	if !anyActiveModifiers(state.modifiers, filter) {
+		return l
+	}
 	for i := range l {
 		// Go through l in reverse
 		line := l[len(l)-i-1]
 		matchFilter := false
-		for _, filt := range filters {
-			if !filt.active || (filt.kind != filter) {
+		for _, mod := range state.modifiers {
+			if !mod.active || (mod.kind != filter) {
 				continue
 			}
-			matched, err := regexp.Match(filt.text, []byte(line))
+			matched, err := regexp.Match(mod.text, []byte(line))
 			if err != nil {
 				continue
 			}
@@ -134,11 +139,8 @@ func (l lines) filter(filters modifiers, height int, offSet int) lines {
 		}
 		if matchFilter {
 			// Build up lines in reverse
-			filteredLines = append([]string{line}, filteredLines...)
-			if len(filteredLines) == height+offSet {
-				break
-			}
+			l = append([]string{line}, l...)
 		}
 	}
-	return filteredLines
+	return l
 }

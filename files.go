@@ -10,12 +10,29 @@ type lines []string
 // file contains the lines of a given file
 type file struct {
 	lines lines
-	filteredFileSelector
+	*filteredFileSelector
+}
+
+func newFile() file {
+	return file{
+		lines:                lines{},
+		filteredFileSelector: &filteredFileSelector{},
+	}
 }
 
 type filteredFileSelector struct {
-	lastLen  int
-	filtered []string
+	lastLen           int
+	lastHlAndFiltered lines
+}
+
+func (f file) hlAndFiltered(state AppState) lines {
+	if f.lastLen == len(f.lines) {
+		return f.lastHlAndFiltered
+	}
+	f.lastLen = len(f.lines)
+	filteredLines := f.lines.filter(state)
+	f.lastHlAndFiltered = filteredLines.highlight(state)
+	return f.lastHlAndFiltered
 }
 
 func (state AppState) getSelectedFileName() string {
@@ -28,10 +45,6 @@ func (state AppState) getSelectedView() LogView {
 
 func (state AppState) getSelectedFile() file {
 	return state.Files[state.getSelectedFileName()]
-}
-
-func (state AppState) getFile(fileName string) file {
-	return state.Files[fileName]
 }
 
 // WatchFile Action

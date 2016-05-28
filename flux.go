@@ -2,7 +2,7 @@ package main
 
 import "time"
 
-const renderInterval = 50 * time.Millisecond
+const renderInterval = 0
 
 // Store for Flux
 type Store struct {
