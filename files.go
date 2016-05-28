@@ -23,15 +23,23 @@ func newFile() file {
 type filteredFileSelector struct {
 	lastLen           int
 	lastHlAndFiltered lines
+	lastModifiers     modifiers
 }
 
 func (f file) hlAndFiltered(state AppState) lines {
-	if f.lastLen == len(f.lines) {
+	if f.lastLen == len(f.lines) && (state.modifiers.isEqual(f.lastModifiers)) {
 		return f.lastHlAndFiltered
 	}
+	// Copy actual modifier structs, not just the slice.
+	newModifiers := []modifier{}
+	for _, mod := range state.modifiers {
+		newModifiers = append(newModifiers, mod)
+	}
+	f.lastModifiers = newModifiers
 	f.lastLen = len(f.lines)
 	filteredLines := f.lines.filter(state)
-	f.lastHlAndFiltered = filteredLines.highlight(state)
+	highlightedLines := filteredLines.highlight(state)
+	f.lastHlAndFiltered = highlightedLines
 	return f.lastHlAndFiltered
 }
 

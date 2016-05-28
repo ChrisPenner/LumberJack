@@ -36,6 +36,18 @@ func (state AppState) toggleModifier(selection int) AppState {
 	return state
 }
 
+func (mods modifiers) isEqual(mods2 modifiers) bool {
+	if len(mods) != len(mods2) {
+		return false
+	}
+	for i, mod := range mods {
+		if mod != mods2[i] {
+			return false
+		}
+	}
+	return true
+}
+
 func (state AppState) getModifiers() []string {
 	var listItems []string
 	listItems = append(listItems, "[Highlighters](fg-cyan,fg-underline)")
@@ -120,6 +132,7 @@ func (l lines) filter(state AppState) lines {
 	if !anyActiveModifiers(state.modifiers, filter) {
 		return l
 	}
+	var filteredLines lines
 	for i := range l {
 		// Go through l in reverse
 		line := l[len(l)-i-1]
@@ -139,8 +152,8 @@ func (l lines) filter(state AppState) lines {
 		}
 		if matchFilter {
 			// Build up lines in reverse
-			l = append([]string{line}, l...)
+			filteredLines = append([]string{line}, filteredLines...)
 		}
 	}
-	return l
+	return filteredLines
 }
