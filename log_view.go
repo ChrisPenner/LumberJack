@@ -66,9 +66,9 @@ func (view LogView) display(state AppState) *ui.List {
 	list.BorderLabel = view.FileName
 	file := state.getFile(view.FileName)
 	height := view.numVisibleLines(state)
-	filteredView := file
+	filteredView := file.lines
 	if anyActiveModifiers(state.modifiers, filter) {
-		filteredView = file.filter(state.modifiers, height, view.offSet)
+		filteredView = filteredView.filter(state.modifiers, height, view.offSet)
 	}
 	if anyActiveModifiers(state.modifiers, highlighter) {
 		filteredView = filteredView.highlight(state.modifiers)
@@ -82,7 +82,7 @@ func (view LogView) display(state AppState) *ui.List {
 
 func (view LogView) scrollToSearch(state AppState) LogView {
 	file := state.Files[view.FileName]
-	searchResultOffset := file.getSearchResultLine(state.searchBuffer.text, state.searchIndex)
+	searchResultOffset := file.lines.getSearchResultLine(state.searchBuffer.text, state.searchIndex)
 	if searchResultOffset >= 0 {
 		view.offSet = searchResultOffset - (logViewHeight(state.termHeight) / 2)
 		if view.offSet < 0 {
@@ -96,21 +96,21 @@ func (view LogView) numVisibleLines(state AppState) int {
 	return logViewHeight(state.termHeight) - 2
 }
 
-func (file File) getVisibleSlice(view LogView, height int) []string {
-	start := (len(file) - height) - view.offSet
+func (lines lines) getVisibleSlice(view LogView, height int) []string {
+	start := (len(lines) - height) - view.offSet
 	if start < 0 {
 		start = 0
 	}
 	end := start + height
-	if end > len(file) {
-		end = len(file)
+	if end > len(lines) {
+		end = len(lines)
 	}
-	return file[start:end]
+	return lines[start:end]
 }
 
-func (file File) getSearchResultLine(term string, searchIndex int) int {
-	for i := range file {
-		line := file[len(file)-i-1]
+func (lines lines) getSearchResultLine(term string, searchIndex int) int {
+	for i := range lines {
+		line := lines[len(lines)-i-1]
 		if strings.Contains(line, term) {
 			if searchIndex <= 0 {
 				return i
@@ -121,12 +121,12 @@ func (file File) getSearchResultLine(term string, searchIndex int) int {
 	return -1
 }
 
-func (file File) highlightMatches(term string) File {
+func (lines lines) highlightMatches(term string) lines {
 	if term == "" {
-		return file
+		return lines
 	}
-	var highlightedLines = make(File, len(file))
-	for i, line := range file {
+	var highlightedLines = make([]string, len(lines))
+	for i, line := range lines {
 		hlTerm := fmt.Sprintf("[%s](bg-yellow,fg-black)", term)
 		highlightedLines[i] = strings.Replace(line, term, hlTerm, -1) //hlTerm, -1)
 	}
@@ -145,8 +145,8 @@ func (state AppState) scroll(direction direction, amount int) AppState {
 	case bottom:
 		view.offSet = 0
 	}
-	if view.offSet > len(file)-view.numVisibleLines(state) {
-		view.offSet = len(file) - view.numVisibleLines(state)
+	if view.offSet > len(file.lines)-view.numVisibleLines(state) {
+		view.offSet = len(file.lines) - view.numVisibleLines(state)
 	}
 	if view.offSet < 0 {
 		view.offSet = 0

@@ -90,9 +90,9 @@ func (mods modifiers) display(state AppState) *ui.Row {
 	return ui.NewCol(modSpan, 0, modList)
 }
 
-func (f File) highlight(highlighters modifiers) File {
-	var highlightedLines File
-	for _, line := range f {
+func (l lines) highlight(highlighters modifiers) lines {
+	var highlightedLines lines
+	for _, line := range l {
 		for _, hl := range highlighters {
 			if !hl.active || hl.kind != highlighter || hl.text == "" {
 				continue
@@ -113,11 +113,11 @@ func (f File) highlight(highlighters modifiers) File {
 	return highlightedLines
 }
 
-func (f File) filter(filters modifiers, height int, offSet int) File {
-	var filteredLines File
-	for i := range f {
-		// Go through file in reverse
-		line := f[len(f)-i-1]
+func (l lines) filter(filters modifiers, height int, offSet int) lines {
+	var filteredLines lines
+	for i := range l {
+		// Go through l in reverse
+		line := l[len(l)-i-1]
 		matchFilter := false
 		for _, filt := range filters {
 			if !filt.active || (filt.kind != filter) {
@@ -133,7 +133,7 @@ func (f File) filter(filters modifiers, height int, offSet int) File {
 			}
 		}
 		if matchFilter {
-			// Build up file in reverse
+			// Build up lines in reverse
 			filteredLines = append([]string{line}, filteredLines...)
 			if len(filteredLines) == height+offSet {
 				break

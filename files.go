@@ -3,10 +3,20 @@ package main
 import tail "github.com/hpcloud/tail"
 
 // Files list
-type Files map[string]File
+type Files map[string]file
 
-// File contains the lines of a given file
-type File []string
+type lines []string
+
+// file contains the lines of a given file
+type file struct {
+	lines lines
+	filteredFileSelector
+}
+
+type filteredFileSelector struct {
+	lastLen  int
+	filtered []string
+}
 
 func (state AppState) getSelectedFileName() string {
 	return state.LogViews[state.selected].FileName
@@ -16,11 +26,11 @@ func (state AppState) getSelectedView() LogView {
 	return state.LogViews[state.selected]
 }
 
-func (state AppState) getSelectedFile() File {
+func (state AppState) getSelectedFile() file {
 	return state.Files[state.getSelectedFileName()]
 }
 
-func (state AppState) getFile(fileName string) File {
+func (state AppState) getFile(fileName string) file {
 	return state.Files[fileName]
 }
 
@@ -52,7 +62,7 @@ type AppendLine struct {
 // Apply the AppendLine
 func (action AppendLine) Apply(state AppState) AppState {
 	file := state.Files[action.FileName]
-	file = append(file, action.Line)
+	file.lines = append(file.lines, action.Line)
 	state.Files[action.FileName] = file
 	return state
 }

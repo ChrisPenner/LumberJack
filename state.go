@@ -26,7 +26,7 @@ type AppState struct {
 // NewAppState constructs and appstate
 func NewAppState(fileNames []string, height int, width int) AppState {
 	sort.Strings(fileNames)
-	files := make(map[string]File)
+	files := make(map[string]file)
 	state := AppState{
 		Files:      files,
 		termHeight: height,
@@ -34,7 +34,7 @@ func NewAppState(fileNames []string, height int, width int) AppState {
 	}
 
 	for _, fileName := range fileNames {
-		state.Files[fileName] = File{}
+		state.Files[fileName] = file{}
 	}
 
 	viewNames := fileNames[:]
