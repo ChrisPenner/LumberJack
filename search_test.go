@@ -46,7 +46,7 @@ func TestSearchTyping(t *testing.T) {
 
 func TestTypeKeySetsViewOffsetForSearch(t *testing.T) {
 	state := NewAppState([]string{"1"}, 2, 10)
-	state.Files["1"] = File{"abc1efg", "test", "other", "things", "out"}
+	state.Files["1"] = file{lines: lines{"abc1efg", "test", "other", "things", "out"}}
 	state.CurrentMode = search
 	state = state.typeKey("1")
 	if state.searchBuffer.text != "1" {
@@ -59,7 +59,7 @@ func TestTypeKeySetsViewOffsetForSearch(t *testing.T) {
 
 func TestIncrementalSearch(t *testing.T) {
 	state := NewAppState([]string{"1"}, 2, 10)
-	state.Files["1"] = File{"banana", "test", "bana", "ban", "one"}
+	state.Files["1"] = file{lines: lines{"banana", "test", "bana", "ban", "one"}}
 	state.CurrentMode = search
 	state.searchBuffer.text = "ba"
 	state = state.typeKey("n")
@@ -78,7 +78,7 @@ func TestIncrementalSearch(t *testing.T) {
 
 func TestFindNextMatch(t *testing.T) {
 	state := NewAppState([]string{"1"}, 1, 10)
-	state.Files["1"] = File{"banana", "test", "bana", "ban", "one"}
+	state.Files["1"] = file{lines: lines{"banana", "test", "bana", "ban", "one"}}
 	state.CurrentMode = normal
 	state.searchBuffer.text = "ba"
 	state = state.findNext(up)

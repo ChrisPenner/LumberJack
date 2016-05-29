@@ -9,13 +9,13 @@ type lines []string
 
 // file contains the lines of a given file
 type file struct {
-	lines lines
+	lines
 	*filteredFileSelector
 }
 
-func newFile() file {
+func newFile(l lines) file {
 	return file{
-		lines:                lines{},
+		lines:                l,
 		filteredFileSelector: &filteredFileSelector{},
 	}
 }

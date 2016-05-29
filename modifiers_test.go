@@ -3,12 +3,13 @@ package main
 import "testing"
 
 func TestFiltering(t *testing.T) {
-	file := File{"one", "twox", "three", "xfour", "fivex"}
-	modifiers := modifiers{
+	file := newFile(lines{"one", "twox", "three", "xfour", "fivex"})
+	state := NewAppState([]string{"1", "2"}, 10, 10)
+	state.modifiers = modifiers{
 		modifier{buffer: buffer{"x"}, active: true, kind: filter},
 	}
-	filtered := file.filter(modifiers, 2, 1)
-	expected := File{"twox", "xfour", "fivex"}
+	filtered := file.filter(state)
+	expected := lines{"twox", "xfour", "fivex"}
 	if len(filtered) != 3 || filtered[0] != expected[0] || filtered[1] != expected[1] || filtered[2] != expected[2] {
 		t.Error(filtered)
 	}
@@ -108,8 +109,9 @@ func TestTabFocusesFilterMode(t *testing.T) {
 }
 
 func TestHighlightsLines(t *testing.T) {
-	view := File{"line one", "love two", "three"}
-	highlighters := modifiers{
+	state := fixtureState()
+	view := newFile(lines{"line one", "love two", "three"})
+	state.modifiers = modifiers{
 		modifier{
 			kind:    highlighter,
 			active:  true,
@@ -118,13 +120,13 @@ func TestHighlightsLines(t *testing.T) {
 			buffer:  buffer{"l\\w*e"},
 		},
 	}
-	view = view.highlight(highlighters)
-	goodLength := len(view) == 3
-	lineOne := "[line](fg-green,bg-white) one" == view[0]
-	lineTwo := "[love](fg-green,bg-white) two" == view[1]
-	lineThree := "three" == view[2]
+	highlighted := view.highlight(state)
+	goodLength := len(highlighted) == 3
+	lineOne := "[line](fg-green,bg-white) one" == highlighted[0]
+	lineTwo := "[love](fg-green,bg-white) two" == highlighted[1]
+	lineThree := "three" == highlighted[2]
 	if !goodLength || !lineOne || !lineTwo || !lineThree {
-		t.Error(view)
+		t.Error(highlighted)
 	}
 }
 

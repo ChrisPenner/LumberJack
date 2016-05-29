@@ -2,6 +2,12 @@ package main
 
 import "testing"
 
+func fixtureState() AppState {
+	state := NewAppState([]string{"One", "Two", "Three"}, 10, 10)
+	state.CurrentMode = normal
+	return state
+}
+
 func TestNewAppStateSetsNormalMode(t *testing.T) {
 	actual := NewAppState([]string{"One"}, 10, 10).CurrentMode
 	expected := normal

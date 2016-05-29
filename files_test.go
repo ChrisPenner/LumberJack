@@ -15,10 +15,10 @@ func TestInitFiles(t *testing.T) {
 func TestAppendLine(t *testing.T) {
 	fileNames := []string{"One", "Two"}
 	state := NewAppState(fileNames, 10, 10)
-	state.Files = map[string]File{"One": File{}}
+	state.Files = map[string]file{"One": file{}}
 	newState := AppendLine{FileName: "One", Line: "MyLine"}.Apply(state)
 	file := newState.Files["One"]
-	if file[0] != "MyLine" {
+	if file.lines[0] != "MyLine" {
 		t.Fail()
 	}
 }

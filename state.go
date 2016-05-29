@@ -34,7 +34,7 @@ func NewAppState(fileNames []string, height int, width int) AppState {
 	}
 
 	for _, fileName := range fileNames {
-		state.Files[fileName] = newFile()
+		state.Files[fileName] = newFile(lines{})
 	}
 
 	viewNames := fileNames[:]
