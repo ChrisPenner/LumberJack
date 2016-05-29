@@ -54,7 +54,7 @@ func (action KeyPress) Apply(state AppState) AppState {
 	case selectCategory:
 		switch key {
 		case "<enter>":
-			bestMatch, ok := state.Categories.getBestMatch(state)
+			bestMatch, ok := state.getBestMatch()
 			if ok {
 				state = state.selectCategory(bestMatch)
 			}

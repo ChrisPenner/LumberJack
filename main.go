@@ -30,7 +30,7 @@ func Render(state AppState) {
 	}
 	mainRow := ui.NewRow(mainColumns...)
 	ui.Body.Rows = []*ui.Row{
-		state.Categories.Display(),
+		state.displayFileBar(),
 		mainRow,
 		state.StatusBar.display(state),
 	}

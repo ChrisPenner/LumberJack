@@ -5,5 +5,6 @@ func (state AppState) changeLayout(choice int) AppState {
 	if state.selected >= state.layout {
 		state.selected = state.layout - 1
 	}
+	state = state.clearUnreadCounts()
 	return state
 }

@@ -10,6 +10,7 @@ type lines []string
 // file contains the lines of a given file
 type file struct {
 	lines
+	numUnread int
 	*filteredFileSelector
 }
 
@@ -88,7 +89,9 @@ type AppendLine struct {
 func (action AppendLine) Apply(state AppState) AppState {
 	file := state.Files[action.FileName]
 	file.lines = append(file.lines, action.Line)
+	file.numUnread++
 	state.Files[action.FileName] = file
+	state.clearUnreadCounts()
 	return state
 }
 

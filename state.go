@@ -9,7 +9,6 @@ type AppState struct {
 	CurrentMode          mode
 	LogViews             LogViews
 	Files                Files
-	Categories           Categories
 	StatusBar            StatusBar
 	HandleKeypress       func(string)
 	selected             int
@@ -21,6 +20,7 @@ type AppState struct {
 	modifiers            modifiers
 	showMods             bool
 	selectedMod          int
+	orderedFileNames     []string
 }
 
 // NewAppState constructs and appstate
@@ -28,9 +28,10 @@ func NewAppState(fileNames []string, height int, width int) AppState {
 	sort.Strings(fileNames)
 	files := make(map[string]file)
 	state := AppState{
-		Files:      files,
-		termHeight: height,
-		termWidth:  width,
+		Files:            files,
+		orderedFileNames: fileNames,
+		termHeight:       height,
+		termWidth:        width,
 	}
 
 	for _, fileName := range fileNames {
@@ -47,8 +48,6 @@ func NewAppState(fileNames []string, height int, width int) AppState {
 		views = append(views, LogView{FileName: fileName})
 	}
 	state.LogViews = views
-
-	state.Categories = fileNames
 
 	state.modifiers = modifiers{
 		// highlighters
