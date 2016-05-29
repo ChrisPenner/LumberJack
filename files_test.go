@@ -23,6 +23,18 @@ func TestAppendLine(t *testing.T) {
 	}
 }
 
+func TestHlAndFilteredSelectorUpdates(t *testing.T) {
+	state := fixtureState()
+	f := file{
+		lines:                lines{"one", "two", "three"},
+		filteredFileSelector: &filteredFileSelector{lastLen: 2, lastHlAndFiltered: lines{"one", "two"}},
+	}
+	l := f.hlAndFiltered(state)
+	if len(l) != 3 || l[0] != "one" && l[1] != "one" && l[2] != "one" {
+		t.Fail()
+	}
+}
+
 // func TestAddWatchers(t *testing.T) {
 // 	fileNames := []string{"One", "Two"}
 // 	actions := make(chan Action, 100)
