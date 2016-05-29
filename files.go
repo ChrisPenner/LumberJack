@@ -21,26 +21,36 @@ func newFile(l lines) file {
 }
 
 type filteredFileSelector struct {
-	lastLen           int
-	lastHlAndFiltered lines
-	lastModifiers     modifiers
+	lastLen                int
+	lastHlAndFiltered      lines
+	lastHLFilteredSearched lines
+	lastModifiers          modifiers
+	lastSearchTerm         string
+	lastHeight             int
+	lastOffSet             int
 }
 
 func (f file) hlAndFiltered(state AppState) lines {
-	if f.lastLen == len(f.lines) && (state.modifiers.isEqual(f.lastModifiers)) {
-		return f.lastHlAndFiltered
+	filteredLines := f.lastHlAndFiltered
+	searchTerm := state.searchBuffer.text
+	if f.lastLen != len(f.lines) || (!state.modifiers.isEqual(f.lastModifiers)) {
+		// Copy actual modifier structs, not just the slice.
+		newModifiers := []modifier{}
+		for _, mod := range state.modifiers {
+			newModifiers = append(newModifiers, mod)
+		}
+		f.lastModifiers = newModifiers
+		filteredLines = f.lines.filter(state)
+		filteredLines = filteredLines.highlight(state)
+		f.lastHlAndFiltered = filteredLines
+		f.lastHLFilteredSearched = filteredLines.highlightMatches(searchTerm)
+	} else if f.lastSearchTerm != searchTerm || f.lastLen != len(f.lines) {
+		f.lastSearchTerm = searchTerm
+		f.lastHLFilteredSearched = f.lastHlAndFiltered.highlightMatches(searchTerm)
+		f.lastSearchTerm = searchTerm
 	}
-	// Copy actual modifier structs, not just the slice.
-	newModifiers := []modifier{}
-	for _, mod := range state.modifiers {
-		newModifiers = append(newModifiers, mod)
-	}
-	f.lastModifiers = newModifiers
 	f.lastLen = len(f.lines)
-	filteredLines := f.lines.filter(state)
-	highlightedLines := filteredLines.highlight(state)
-	f.lastHlAndFiltered = highlightedLines
-	return f.lastHlAndFiltered
+	return f.lastHLFilteredSearched
 }
 
 func (state AppState) getSelectedFileName() string {
@@ -55,12 +65,6 @@ func (state AppState) getSelectedFile() file {
 	return state.Files[state.getSelectedFileName()]
 }
 
-// WatchFile Action
-type WatchFile struct {
-	FileName string
-}
-
-// Apply WatchFile
 func watchFile(fileName string, actions chan<- Action) {
 	addNewLine := func(fileName string, newLine string) {
 		actions <- AppendLine{FileName: fileName, Line: newLine}
