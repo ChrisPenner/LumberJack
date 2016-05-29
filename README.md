@@ -1,4 +1,4 @@
-# LumberJack
+# LumberJack [![Build Status](https://travis-ci.org/ChrisPenner/LumberJack.svg?branch=master)](https://travis-ci.org/ChrisPenner/LumberJack)
 ![demo](docs/demo.gif)
 ![screenshot](docs/screenshot.png)
 
