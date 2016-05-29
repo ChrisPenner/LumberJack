@@ -19,3 +19,12 @@ It can also:
 - Display logs from multiple servers side by side
 - Display multiple views into the same log file
 - Highlight text matching a given regular expression
+
+## Install
+Assuming `go` is installed:
+```bash
+$ go get github.com/chrispenner/lumberjack
+$ $GOPATH/bin/lumberjack logs1 logs2
+```
+
+Put `$GOPATH/bin` on your `$PATH` to use the `lumberjack` command.
