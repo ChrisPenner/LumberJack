@@ -34,12 +34,3 @@ func TestHlAndFilteredSelectorUpdates(t *testing.T) {
 		t.Fail()
 	}
 }
-
-// func TestAddWatchers(t *testing.T) {
-// 	fileNames := []string{"One", "Two"}
-// 	actions := make(chan Action, 100)
-// 	addWatchers(fileNames, actions)
-// 	if !ok1 || !ok2 || w1.FileName != "One" || w2.FileName != "Two" {
-// 		t.Fail()
-// 	}
-// }
