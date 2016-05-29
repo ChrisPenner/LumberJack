@@ -57,6 +57,7 @@ func (logViews LogViews) display(state AppState) []*ui.Row {
 func (view LogView) display(state AppState) *ui.List {
 	list := ui.NewList()
 	list.Height = logViewHeight(state.termHeight)
+	list.BorderLabelFg = ui.ColorCyan
 	active := state.getSelectedFileName() == view.FileName
 	if active {
 		list.BorderFg = ui.ColorWhite
