@@ -28,3 +28,27 @@ $ $GOPATH/bin/lumberjack logs1 logs2
 ```
 
 Put `$GOPATH/bin` on your `$PATH` to use the `lumberjack` command.
+
+## Keybindings
+
+### Log view:
+- `<enter>`: Select a log-file for the current pane
+- `<tab>`: Toggle the filters/highlighters side-pane
+- `?` or `/`: Start a search
+- `w`: Toggle text-wrapping
+- `^h` and `^l`: Switch panes left and right respectively
+- `<up>` and `<down>`: Scroll 1 line at a time
+- `b` or `^u`: Scroll up half a screen
+- `^d`: Scroll down half a screen
+- `G`: Scroll to bottom (latest) logs
+- `n`: Find next occurrance
+- `N`: Find previous occurrance
+- `1-4`: Display 1-4 panes respectively
+- `<shift> + 0-9`: Toggle the respective filter/highlighter
+
+### Filter/Highlighter pane:
+- `<tab>`: Toggle the filters/highlighters side-pane
+- `<enter>`: Edit the current modifier
+- `<space>`: Toggle the current modifier
+- `j`: Move down one modifier
+- `k`: Move up one modifier
