@@ -1,4 +1,5 @@
 # LumberJack [![CircleCI](https://circleci.com/gh/ChrisPenner/LumberJack.svg?style=svg)](https://circleci.com/gh/ChrisPenner/LumberJack)
+[Download Binary](https://github.com/ChrisPenner/LumberJack/releases/latest)
 
 ![screenshot](docs/screenshot.png)
 ![demo](docs/demo.gif)
@@ -22,11 +23,19 @@ It can also:
 - Highlight text matching a given regular expression
 
 ## Install
+
+The simplest method is to download a binary for your platform here: 
+[Download Binary](https://github.com/ChrisPenner/LumberJack/releases/latest)
+
+Or you can install from source:
+
 Assuming `go` is installed:
 ```bash
 $ go get github.com/chrispenner/lumberjack
 $ $GOPATH/bin/lumberjack logs1 logs2
 ```
+
+
 
 Put `$GOPATH/bin` on your `$PATH` to use the `lumberjack` command.
 
