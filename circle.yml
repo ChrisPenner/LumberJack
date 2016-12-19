@@ -1,0 +1,20 @@
+machine:
+  pre:
+    # Use newer golang version
+    - sudo mv /usr/local/go /usr/local/go-1.6.2
+    - wget -q -O /tmp/go1.7.3.tgz https://storage.googleapis.com/golang/go1.7.3.linux-amd64.tar.gz
+    - sudo tar -xzf /tmp/go1.7.3.tgz -C /usr/local
+
+checkout:
+  post:
+    - git fetch --tags && git tag
+
+deployment:
+  release:
+    branch: master
+    commands:
+      - echo "-X main.Version `git describe --tags` -X main.BuildDate `date -u '+%Y/%m/%d %H:%M:%S'`"
+      - go get github.com/mitchellh/gox
+      - go get -u github.com/tcnksm/ghr
+      - gox -ldflags "-X main.Version=`git describe --tags` -X main.BuildDate=`date -u '+%Y/%m/%d %H:%M:%S'`" -output "dist/ncd_{{.OS}}_{{.Arch}}"
+      - ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` dist/
