@@ -16,5 +16,5 @@ deployment:
       - echo "-X main.Version=$(git describe --tags) -X main.BuildDate=$(date -u '+%Y/%m/%d-%H:%M:%S')"
       - go get github.com/mitchellh/gox
       - go get -u github.com/tcnksm/ghr
-      - gox -ldflags "-X main.Version=$(git describe --tags) -X main.BuildDate=$(date -u '+%Y/%m/%d-%H:%M:%S')" -output "dist/ncd_{{.OS}}_{{.Arch}}"
+      - gox -ldflags "-X main.Version=$(git describe --tags) -X main.BuildDate=$(date -u '+%Y/%m/%d-%H:%M:%S')" -output "dist/lumberjack_{{.OS}}_{{.Arch}}"
       - ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` dist/
