@@ -11,9 +11,8 @@ checkout:
 
 deployment:
   release:
-    branch: master
+    tag: /v[0-9]+(\.[0-9]+)*/
     commands:
-      - echo "-X main.Version=$(git describe --tags) -X main.BuildDate=$(date -u '+%Y/%m/%d-%H:%M:%S')"
       - go get github.com/mitchellh/gox
       - go get -u github.com/tcnksm/ghr
       - gox -ldflags "-X main.Version=$(git describe --tags) -X main.BuildDate=$(date -u '+%Y/%m/%d-%H:%M:%S')" -output "dist/lumberjack_{{.OS}}_{{.Arch}}"
