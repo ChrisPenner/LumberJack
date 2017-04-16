@@ -4,7 +4,7 @@ import "testing"
 
 func TestSwitchingFocusTooFarLeft(t *testing.T) {
 	state := NewAppState([]string{"One"}, 10, 10)
-	state = KeyPress{Key: "<backspace>"}.Apply(state)
+	state = KeyPress{Key: "h"}.Apply(state)
 	if state.selected != 0 {
 		t.Fail()
 	}
@@ -13,7 +13,7 @@ func TestSwitchingFocusTooFarLeft(t *testing.T) {
 func TestSwitchingFocusToRight(t *testing.T) {
 	state := NewAppState([]string{"One"}, 10, 10)
 	state.layout = 2
-	state = KeyPress{Key: "C-l"}.Apply(state)
+	state = KeyPress{Key: "l"}.Apply(state)
 	if state.selected != 1 {
 		t.Fail()
 	}
