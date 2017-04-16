@@ -2,7 +2,7 @@ package main
 
 import ui "github.com/gizak/termui"
 
-func renderSelectCategoryModal(state AppState) {
+func renderSelectCategoryModal(state *AppState) {
 	height := state.termHeight
 	width := state.termWidth
 	text := state.selectCategoryBuffer.text

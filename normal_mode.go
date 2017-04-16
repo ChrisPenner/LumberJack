@@ -10,7 +10,7 @@ const (
 	bottom
 )
 
-func (state AppState) changeSelection(direction direction) AppState {
+func (state *AppState) changeSelection(direction direction) *AppState {
 	switch direction {
 	case left:
 		if state.selected > 0 {

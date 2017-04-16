@@ -2,7 +2,7 @@ package main
 
 import "testing"
 
-func fixtureState() AppState {
+func fixtureState() *AppState {
 	state := NewAppState([]string{"One", "Two", "Three"}, 10, 10)
 	state.CurrentMode = normal
 	return state

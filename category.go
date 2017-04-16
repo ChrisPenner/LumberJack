@@ -7,7 +7,7 @@ import (
 	ui "github.com/gizak/termui"
 )
 
-func (state AppState) displayFileBar() *ui.Row {
+func (state *AppState) displayFileBar() *ui.Row {
 	fileNames := ""
 	for _, fileName := range state.orderedFileNames {
 		file := state.Files[fileName]
@@ -19,7 +19,7 @@ func (state AppState) displayFileBar() *ui.Row {
 	return ui.NewRow(ui.NewCol(12, 0, par))
 }
 
-func (state AppState) getFilteredFileNames() []string {
+func (state *AppState) getFilteredFileNames() []string {
 	pattern := state.selectCategoryBuffer.text
 	var results []string
 	for _, fileName := range state.orderedFileNames {
@@ -30,7 +30,7 @@ func (state AppState) getFilteredFileNames() []string {
 	return results
 }
 
-func (state AppState) getBestMatch() (string, bool) {
+func (state *AppState) getBestMatch() (string, bool) {
 	filtered := state.getFilteredFileNames()
 	if len(state.selectCategoryBuffer.text) == 0 {
 		return "", false
@@ -41,7 +41,7 @@ func (state AppState) getBestMatch() (string, bool) {
 	return "", false
 }
 
-func (state AppState) selectCategory(fileName string) AppState {
+func (state *AppState) selectCategory(fileName string) *AppState {
 	selectedView := state.LogViews[state.selected]
 	selectedView.FileName = fileName
 	state.LogViews[state.selected] = selectedView
@@ -49,7 +49,7 @@ func (state AppState) selectCategory(fileName string) AppState {
 	return state
 }
 
-func (state AppState) clearUnreadCounts() AppState {
+func (state *AppState) clearUnreadCounts() *AppState {
 	for i := 0; i < state.layout; i++ {
 		f := state.Files[state.LogViews[i].FileName]
 		f.numUnread = 0

@@ -1,6 +1,6 @@
 package main
 
-func (state AppState) typeKey(key string) AppState {
+func (state *AppState) typeKey(key string) *AppState {
 	switch state.CurrentMode {
 	case selectCategory:
 		state.selectCategoryBuffer = state.selectCategoryBuffer.typeKey(key)

@@ -8,7 +8,7 @@ type StatusBar struct {
 }
 
 // Display returns a renderable status bar
-func (s StatusBar) display(state AppState) *ui.Row {
+func (s StatusBar) display(state *AppState) *ui.Row {
 	var text string
 	if state.CurrentMode == search {
 		text = "?: " + state.searchBuffer.text + "_"

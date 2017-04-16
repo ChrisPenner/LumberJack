@@ -8,7 +8,7 @@ type KeyPress struct {
 }
 
 // Apply the KeyPress
-func (action KeyPress) Apply(state AppState) AppState {
+func (action KeyPress) Apply(state *AppState) *AppState {
 	key := action.Key
 	switch state.CurrentMode {
 	case normal:
@@ -24,10 +24,9 @@ func (action KeyPress) Apply(state AppState) AppState {
 			state = state.changeMode(search)
 		case "w":
 			state.wrap = !state.wrap
-		case "<backspace>":
-			// Actually c-h
+		case "h":
 			state = state.changeSelection(left)
-		case "C-l":
+		case "l":
 			state = state.changeSelection(right)
 		case "<up>", "k":
 			state = state.scroll(up, 1)

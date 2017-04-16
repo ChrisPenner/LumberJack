@@ -24,7 +24,7 @@ type AppState struct {
 }
 
 // NewAppState constructs and appstate
-func NewAppState(fileNames []string, height int, width int) AppState {
+func NewAppState(fileNames []string, height int, width int) *AppState {
 	sort.Strings(fileNames)
 	files := make(map[string]file)
 	state := AppState{
@@ -61,5 +61,5 @@ func NewAppState(fileNames []string, height int, width int) AppState {
 	}
 
 	state.layout = 1
-	return state
+	return &state
 }

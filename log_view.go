@@ -19,7 +19,7 @@ type LogView struct {
 type initLogViews struct{}
 
 // Display returns a Row object representing all of the logViews
-func (logViews LogViews) display(state AppState) []*ui.Row {
+func (logViews LogViews) display(state *AppState) []*ui.Row {
 	listBlocks := []*ui.List{}
 	for i, view := range logViews {
 		if i >= state.layout {
@@ -54,7 +54,7 @@ func (logViews LogViews) display(state AppState) []*ui.Row {
 	return logViewColumns
 }
 
-func (view LogView) display(state AppState) *ui.List {
+func (view LogView) display(state *AppState) *ui.List {
 	list := ui.NewList()
 	list.Height = logViewHeight(state.termHeight)
 	list.BorderLabelFg = ui.ColorCyan
@@ -73,7 +73,7 @@ func (view LogView) display(state AppState) *ui.List {
 	return list
 }
 
-func (view LogView) scrollToSearch(state AppState) LogView {
+func (view LogView) scrollToSearch(state *AppState) LogView {
 	file := state.Files[view.FileName]
 	searchResultOffset := file.lines.getSearchResultLine(state.searchBuffer.text, state.searchIndex)
 	if searchResultOffset >= 0 {
@@ -85,7 +85,7 @@ func (view LogView) scrollToSearch(state AppState) LogView {
 	return view
 }
 
-func (view LogView) numVisibleLines(state AppState) int {
+func (view LogView) numVisibleLines(state *AppState) int {
 	return logViewHeight(state.termHeight) - 2
 }
 
@@ -127,7 +127,7 @@ func (lines lines) highlightMatches(term string) lines {
 }
 
 // Scroll
-func (state AppState) scroll(direction direction, amount int) AppState {
+func (state *AppState) scroll(direction direction, amount int) *AppState {
 	view := state.getSelectedView()
 	file := state.getSelectedFile()
 	switch direction {

@@ -10,7 +10,7 @@ const (
 	editModifier
 )
 
-func (state AppState) changeMode(mode mode) AppState {
+func (state *AppState) changeMode(mode mode) *AppState {
 	state.CurrentMode = mode
 	switch mode {
 	case search:

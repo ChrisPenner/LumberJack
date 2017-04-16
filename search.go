@@ -1,6 +1,6 @@
 package main
 
-func (state AppState) findNext(direction direction) AppState {
+func (state *AppState) findNext(direction direction) *AppState {
 	switch direction {
 	case up:
 		state.searchIndex++

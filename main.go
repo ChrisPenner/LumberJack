@@ -15,14 +15,14 @@ type resize struct {
 	width  int
 }
 
-func (action resize) Apply(state AppState) AppState {
+func (action resize) Apply(state *AppState) *AppState {
 	state.termHeight = action.height
 	state.termWidth = action.width
 	return state
 }
 
 // Render the application as a function of state
-func Render(state AppState) {
+func Render(state *AppState) {
 	mainColumns := state.LogViews.display(state)
 	if state.showMods {
 		filterColumn := state.modifiers.display(state)

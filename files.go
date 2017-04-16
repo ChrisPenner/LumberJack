@@ -31,7 +31,7 @@ type filteredFileSelector struct {
 	lastOffSet             int
 }
 
-func (f file) hlAndFiltered(state AppState) lines {
+func (f file) hlAndFiltered(state *AppState) lines {
 	filteredLines := f.lastHlAndFiltered
 	searchTerm := state.searchBuffer.text
 	if f.lastLen != len(f.lines) || (!state.modifiers.isEqual(f.lastModifiers)) {
@@ -54,15 +54,15 @@ func (f file) hlAndFiltered(state AppState) lines {
 	return f.lastHLFilteredSearched
 }
 
-func (state AppState) getSelectedFileName() string {
+func (state *AppState) getSelectedFileName() string {
 	return state.LogViews[state.selected].FileName
 }
 
-func (state AppState) getSelectedView() LogView {
+func (state *AppState) getSelectedView() LogView {
 	return state.LogViews[state.selected]
 }
 
-func (state AppState) getSelectedFile() file {
+func (state *AppState) getSelectedFile() file {
 	return state.Files[state.getSelectedFileName()]
 }
 
@@ -86,7 +86,7 @@ type AppendLine struct {
 }
 
 // Apply the AppendLine
-func (action AppendLine) Apply(state AppState) AppState {
+func (action AppendLine) Apply(state *AppState) *AppState {
 	file := state.Files[action.FileName]
 	file.lines = append(file.lines, action.Line)
 	file.numUnread++

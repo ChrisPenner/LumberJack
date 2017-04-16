@@ -29,7 +29,7 @@ func getModifierSpan(termWidth int) int {
 	return (minWidth / ((termWidth / columns) | 1)) + 1
 }
 
-func (state AppState) toggleModifier(selection int) AppState {
+func (state *AppState) toggleModifier(selection int) *AppState {
 	if selection < len(state.modifiers) {
 		state.modifiers[selection].active = !state.modifiers[selection].active
 	}
@@ -48,7 +48,7 @@ func (mods modifiers) isEqual(mods2 modifiers) bool {
 	return true
 }
 
-func (state AppState) getModifiers() []string {
+func (state *AppState) getModifiers() []string {
 	var listItems []string
 	listItems = append(listItems, "[Highlighters](fg-cyan,fg-underline)")
 	addHeader := true
@@ -81,7 +81,7 @@ func (state AppState) getModifiers() []string {
 	return listItems
 }
 
-func (mods modifiers) display(state AppState) *ui.Row {
+func (mods modifiers) display(state *AppState) *ui.Row {
 	var listItems []string
 	listItems = append(listItems, state.getModifiers()...)
 
@@ -102,7 +102,7 @@ func (mods modifiers) display(state AppState) *ui.Row {
 	return ui.NewCol(modSpan, 0, modList)
 }
 
-func (l lines) highlight(state AppState) lines {
+func (l lines) highlight(state *AppState) lines {
 	if !anyActiveModifiers(state.modifiers, highlighter) {
 		return l
 	}
@@ -128,7 +128,7 @@ func (l lines) highlight(state AppState) lines {
 	return highlightedLines
 }
 
-func (l lines) filter(state AppState) lines {
+func (l lines) filter(state *AppState) lines {
 	if !anyActiveModifiers(state.modifiers, filter) {
 		return l
 	}

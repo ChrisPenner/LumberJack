@@ -2,7 +2,7 @@ package main
 
 import "time"
 
-const renderInterval = 50 * time.Millisecond
+const debounceInterval = 50 * time.Millisecond
 
 // Store for Flux
 type Store struct {
@@ -17,9 +17,9 @@ func NewStore() Store {
 }
 
 // ReduceLoop will continually apply actions to state
-func (store Store) ReduceLoop(state AppState) {
+func (store Store) ReduceLoop(state *AppState) {
 	// This debouncing logic allows us to keep applying state changes, but only render every renderInterval
-	debouncer := time.After(renderInterval)
+	debouncer := time.After(debounceInterval)
 	rendered := true
 	for {
 		if rendered {
@@ -30,7 +30,7 @@ func (store Store) ReduceLoop(state AppState) {
 		select {
 		case <-debouncer:
 			Render(state)
-			debouncer = time.After(renderInterval)
+			debouncer = time.After(debounceInterval)
 			rendered = true
 		case action := <-store.Actions:
 			state = action.Apply(state)
@@ -41,5 +41,5 @@ func (store Store) ReduceLoop(state AppState) {
 
 // Action represents a change to take place
 type Action interface {
-	Apply(AppState) AppState
+	Apply(*AppState) *AppState
 }
