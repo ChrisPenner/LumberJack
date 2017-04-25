@@ -24,8 +24,18 @@ It can also:
 
 ## Install
 
+### Binary
 The simplest method is to download a binary for your platform here: 
 [Download Binary](https://github.com/ChrisPenner/LumberJack/releases/latest)
+
+### Homebrew
+
+```
+brew update
+brew install chrispenner/tools/lumberjack
+```
+
+### Source
 
 Or you can install from source:
 
