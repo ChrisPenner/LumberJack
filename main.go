@@ -1,7 +1,11 @@
 package main
 
-import ui "github.com/gizak/termui"
-import "os"
+import (
+	"fmt"
+	"os"
+
+	ui "github.com/gizak/termui"
+)
 
 const statusBarHeight = 1
 const categoriesHeight = 1
@@ -50,11 +54,16 @@ func initUI() {
 }
 
 func main() {
+	fileNames := os.Args[1:]
+	if len(fileNames) == 0 {
+		fmt.Printf("usage: lumberjack logfile1 logfile2 ...")
+		return
+	}
+
 	initUI()
 	defer ui.Close()
 
 	store := NewStore()
-	fileNames := os.Args[1:]
 	state := NewAppState(fileNames, ui.TermHeight(), ui.TermWidth())
 	addWatchers(fileNames, store.Actions)
 	go store.ReduceLoop(state)
